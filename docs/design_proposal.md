@@ -2,8 +2,8 @@
 
 **Kurs:** WIMU 2025/2026  
 **Temat nr 3**  
-**Zespół:** [Imię Nazwisko 1], [Imię Nazwisko 2], [Imię Nazwisko 3]  
-**Repozytorium:** [link do GitHub]  
+**Zespół:** Feliks Bańka, Mateusz Baran, Paulina Staszewska  
+**Repozytorium:** https://github.com/Felooo8/WIMU-Symbolic-Music-Similarity  
 **Data:** 18.03.2026  
 
 ---
@@ -20,12 +20,12 @@ Projekt ma wymiar zarówno eksperymentalny, jak i aplikacyjny: zbudujemy pipelin
 
 Wybrano 4 datasety zapewniające maksymalne zróżnicowanie stylistyczne przy dostępności przez MusPy lub standardowe repozytoria:
 
-| Dataset | Styl | Planowana próba | Uwagi |
-|---|---|---|---|
-| **MAESTRO v3** | Muzyka klasyczna, fortepian | 1 000 plików | Wirtuozerska, sparowane MIDI + audio, wbudowana w MusPy |
-| **Lakh MIDI Dataset (LMD-matched)** | Pop/rock/różne gatunki | 1 000 losowych plików | Bardzo „brudny", duże zróżnicowanie stylów |
-| **JSB Chorales** | Barokowe chorały (Bach) | ~400 plików (cały dataset) | Czysty, 4-głosowy, dostępny przez MusPy |
-| **NES Music Database** | Muzyka 8-bit / chiptune | 500 plików | Skrajnie odmienny styl, ograniczona polifonia |
+| Dataset                             | Styl                        | Planowana próba            | Uwagi                                                   |
+|-------------------------------------|-----------------------------|----------------------------|---------------------------------------------------------|
+| **MAESTRO v3**                      | Muzyka klasyczna, fortepian | 1 000 plików               | Wirtuozerska, sparowane MIDI + audio, wbudowana w MusPy |
+| **Lakh MIDI Dataset (LMD-matched)** | Pop/rock/różne gatunki      | 1 000 losowych plików      | Bardzo „brudny", duże zróżnicowanie stylów              |
+| **JSB Chorales**                    | Barokowe chorały (Bach)     | ~400 plików (cały dataset) | Czysty, 4-głosowy, dostępny przez MusPy                 |
+| **NES Music Database**              | Muzyka 8-bit / chiptune     | 500 plików                 | Skrajnie odmienny styl, ograniczona polifonia           |
 
 Daje to **6 par** datasetów — macierze podobieństwa 4×4.
 
