@@ -10,7 +10,7 @@
 
 ## 1. Cel projektu i pytanie badawcze
 
-Głównym pytaniem badawczym jest: **czy proste cechy statystyczne ekstrahowane z plików MIDI są wystarczającym i tanim proxy dla metryk opartych na embeddingach (Frechet Music Distance) oraz oceny perceptualnej człowieka?**
+Głównym pytaniem badawczym jest: **czy proste cechy statystyczne ekstrahowane z plików MIDI są wystarczającym i tanim proxy dla metryk opartych na embeddingach (Frechet Music Distance) [1] oraz oceny perceptualnej człowieka [2]?**
 
 Projekt ma wymiar zarówno eksperymentalny, jak i aplikacyjny: zbudujemy pipeline, który dla dowolnej pary datasetów muzyki symbolicznej oblicza macierz podobieństwa opartą na cechach statystycznych, a następnie porówna ją z wynikami FMD i badania odsłuchowego przy użyciu korelacji rang Spearmana.
 
@@ -22,10 +22,10 @@ Wybrano 4 datasety zapewniające maksymalne zróżnicowanie stylistyczne przy do
 
 | Dataset                             | Styl                        | Planowana próba            | Uwagi                                                   |
 |-------------------------------------|-----------------------------|----------------------------|---------------------------------------------------------|
-| **MAESTRO v3**                      | Muzyka klasyczna, fortepian | 1 000 plików               | Wirtuozerska, sparowane MIDI + audio, wbudowana w MusPy |
-| **Lakh MIDI Dataset (LMD-matched)** | Pop/rock/różne gatunki      | 1 000 losowych plików      | Bardzo „brudny", duże zróżnicowanie stylów              |
-| **JSB Chorales**                    | Barokowe chorały (Bach)     | ~400 plików (cały dataset) | Czysty, 4-głosowy, dostępny przez MusPy                 |
-| **NES Music Database**              | Muzyka 8-bit / chiptune     | 500 plików                 | Skrajnie odmienny styl, ograniczona polifonia           |
+| **MAESTRO v3 [5]**                      | Muzyka klasyczna, fortepian | 1 000 plików               | Wirtuozerska, sparowane MIDI + audio, wbudowana w MusPy |
+| **Lakh MIDI Dataset (LMD-matched) [4]** | Pop/rock/różne gatunki      | 1 000 losowych plików      | Bardzo „brudny", duże zróżnicowanie stylów              |
+| **JSB Chorales [3]**                    | Barokowe chorały (Bach)     | ~400 plików (cały dataset) | Czysty, 4-głosowy, dostępny przez MusPy                 |
+| **NES Music Database [6]**              | Muzyka 8-bit / chiptune     | 500 plików                 | Skrajnie odmienny styl, ograniczona polifonia           |
 
 Daje to **6 par** datasetów — macierze podobieństwa 4×4.
 
@@ -33,7 +33,7 @@ Daje to **6 par** datasetów — macierze podobieństwa 4×4.
 
 ## 3. Planowane cechy statystyczne
 
-### 3.1 Cechy skalarne (via MusPy metrics)
+### 3.1 Cechy skalarne (via MusPy metrics) [3]
 
 | Cecha | Opis |
 |---|---|
@@ -69,13 +69,13 @@ Dla każdej pary datasetów i każdego rozkładu obliczamy:
 
 FMD obliczamy za pomocą oficjalnego repozytorium: https://github.com/jryban/frechet-music-distance
 
-FMD mierzy odległość Frécheta między rozkładami Gaussa dopasowanymi do embeddingów dwóch zbiorów plików MIDI. Model embeddingowy do ustalenia podczas analizy literaturowej (kandydaci: MusicBERT, MusicVAE). Obliczenia FMD dla 6 par datasetów × ~1 000 plików szacujemy na **4–8 h GPU** (Google Colab Pro lub klaster uczelniany).
+FMD mierzy odległość Frécheta między rozkładami Gaussa dopasowanymi do embeddingów dwóch zbiorów plików MIDI [1]. Model embeddingowy do ustalenia podczas analizy literaturowej (kandydaci: MusicBERT, MusicVAE). Obliczenia FMD dla 6 par datasetów × ~1 000 plików szacujemy na **4–8 h GPU** (Google Colab Pro lub klaster uczelniany).
 
 ---
 
 ## 6. Badanie odsłuchowe
 
-Metodologia wzorowana na Manor & Leibovich (2024):
+Metodologia wzorowana na Manor & Leibovich (2024) [2]:
 
 - **Słuchacze:** minimum 10 osób (ochotnicy ze środowiska akademickiego)
 - **Próbki:** 18 par 15-sekundowych excerptów — 3 pary na każdą z 6 kombinacji datasetów, w tym 3 pary kontrolne wewnątrz-datasetowe (oczekiwana wysoka podobność)
@@ -200,3 +200,4 @@ Dostęp do GPU: Google Colab Pro (jednorazowy koszt ~10 USD) lub klaster HPC ucz
 3. Dong, H. W., et al. (2020). *MusPy: A Toolkit for Symbolic Music Generation*. ISMIR 2020. https://github.com/salu133445/muspy  
 4. Raffel, C. (2016). *Learning-Based Methods for Comparing Sequences, with Applications to Audio-to-MIDI Alignment and Matching*. PhD thesis. https://colinraffel.com/projects/lmd/  
 5. Hawthorne, C., et al. (2019). *Enabling Factorized Piano Music Modeling and Generation with the MAESTRO Dataset*. ICLR 2019. https://magenta.tensorflow.org/datasets/maestro  
+6. Donahue, C., et al. (2018). *The NES Music Database: A multi-instrumental dataset with expressive performance attributes*. ISMIR 2018. https://github.com/chrisdonahue/nesmdb

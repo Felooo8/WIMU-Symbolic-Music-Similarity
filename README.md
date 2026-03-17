@@ -13,7 +13,7 @@
 Projekt bada, czy **proste cechy statystyczne** ekstrahowane z plików MIDI (rozkład pitch class, histogram interwałów, entropia tonalna, długości nut, polifonia, groove consistency) mogą stanowić **skuteczny i tani proxy** dla zaawansowanych metryk opartych na embeddingach.
 
 **Główne pytanie badawcze:**  
-Czy cechy statystyczne są wystarczającym substytutem Frechet Music Distance (FMD) i oceny perceptualnej człowieka — i które z nich korelują z tymi miarami najsilniej?
+Czy cechy statystyczne są wystarczającym substytutem Frechet Music Distance (FMD) i oceny perceptualnej człowieka — i które z nich korelują z tymi miarami najsilniej? [1, 2]
 
 **Przepływ eksperymentu:**
 
@@ -21,7 +21,7 @@ Czy cechy statystyczne są wystarczającym substytutem Frechet Music Distance (F
 Datasety MIDI
     │
     ▼
-Ekstrakcja cech statystycznych (MusPy)
+Ekstrakcja cech statystycznych (MusPy) [3]
     │
     ├──► Macierze podobieństwa (JSD / Wasserstein / Euclidean)
     │
@@ -40,8 +40,8 @@ Ekstrakcja cech statystycznych (MusPy)
 | Imię i Nazwisko    | GitHub                                 |
 | ------------------ | -------------------------------------- |
 | Feliks Bańka       | [@Felooo8](https://github.com/Felooo8) |
-| Mateusz Baran      | [@...](https://github.com)             |
-| Paulina Staszewska | [@...](https://github.com)             |
+| Mateusz Baran      | [@matiuszaa](https://github.com/matiuszaa)             |
+| Paulina Staszewska | [@paullastasz](https://github.com/paullastasz)             |
 
 ---
 
@@ -51,7 +51,7 @@ Ekstrakcja cech statystycznych (MusPy)
 | ------------------------------- | ---------------------------- | ------------ | ------------------------------------------------------- |
 | MAESTRO v3                      | Muzyka klasyczna (fortepian) | 1 000 plików | [link](https://magenta.tensorflow.org/datasets/maestro) |
 | Lakh MIDI Dataset (LMD-matched) | Pop / rock / mixed           | 1 000 plików | [link](https://colinraffel.com/projects/lmd/)           |
-| JSB Chorales                    | Chorały Bacha (4-głosowe)    | ~400 plików  | wbudowany w MusPy                                       |
+| JSB Chorales                    | Chorały Bacha (4-głosowe)    | ~400 plików  | wbudowany w MusPy [3]                                       |
 | NES Music Database              | Muzyka 8-bit / chiptune      | 500 plików   | [link](https://github.com/chrisdonahue/nesmdb)          |
 
 ---
