@@ -37,11 +37,11 @@ Ekstrakcja cech statystycznych (MusPy) [3]
 
 ## 👥 Autorzy — Zespół nr 6
 
-| Imię i Nazwisko    | GitHub                                 |
-| ------------------ | -------------------------------------- |
-| Feliks Bańka       | [@Felooo8](https://github.com/Felooo8) |
-| Mateusz Baran      | [@matiuszaa](https://github.com/matiuszaa)             |
-| Paulina Staszewska | [@paullastasz](https://github.com/paullastasz)             |
+| Imię i Nazwisko    | GitHub                                         |
+| ------------------ | ---------------------------------------------- |
+| Feliks Bańka       | [@Felooo8](https://github.com/Felooo8)         |
+| Mateusz Baran      | [@matiuszaa](https://github.com/matiuszaa)     |
+| Paulina Staszewska | [@paullastasz](https://github.com/paullastasz) |
 
 ---
 
@@ -51,7 +51,7 @@ Ekstrakcja cech statystycznych (MusPy) [3]
 | ------------------------------- | ---------------------------- | ------------ | ------------------------------------------------------- |
 | MAESTRO v3                      | Muzyka klasyczna (fortepian) | 1 000 plików | [link](https://magenta.tensorflow.org/datasets/maestro) |
 | Lakh MIDI Dataset (LMD-matched) | Pop / rock / mixed           | 1 000 plików | [link](https://colinraffel.com/projects/lmd/)           |
-| JSB Chorales                    | Chorały Bacha (4-głosowe)    | ~400 plików  | wbudowany w MusPy [3]                                       |
+| JSB Chorales                    | Chorały Bacha (4-głosowe)    | ~400 plików  | wbudowany w MusPy [3]                                   |
 | NES Music Database              | Muzyka 8-bit / chiptune      | 500 plików   | [link](https://github.com/chrisdonahue/nesmdb)          |
 
 ---
@@ -83,8 +83,8 @@ Ekstrakcja cech statystycznych (MusPy) [3]
 ### Instalacja
 
 ```bash
-git clone https://github.com/<org>/<repo>.git
-cd <repo>
+git clone https://github.com/Felooo8/WIMU-Symbolic-Music-Similarity.git
+cd WIMU-Symbolic-Music-Similarity
 
 # Instalacja zależności przez Poetry
 make install
@@ -167,8 +167,10 @@ wandb:
 ├── tests/                    # pytest
 ├── docs/
 │   ├── literature.md         # tabela analizy literaturowej
+├── docs/
+│   ├── literature.md         # tabela analizy literaturowej
+│   ├── design_proposal.md    # design proposal projektu
 │   └── usage.md              # szczegółowa instrukcja użytkowania
-├── design_proposal.md        # design proposal projektu
 ├── Makefile
 ├── pyproject.toml
 └── README.md
