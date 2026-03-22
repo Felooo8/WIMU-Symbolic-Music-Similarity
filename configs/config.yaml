@@ -1,0 +1,6 @@
+datasets:
+  maestro:
+    name: "maestro_v3"
+    path: "data/raw/maestro"
+    sample_size: 1000
+
