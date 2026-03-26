@@ -2,5 +2,15 @@ datasets:
   maestro:
     name: "maestro_v3"
     path: "data/raw/maestro"
-    sample_size: 1000
-
+    sample_size: 10
+  nes_mdb:
+      name: "nes_mdb"
+      path: "data/raw/nes_mdb"
+      sample_size: 10
+  lakh_midi:
+    name: "lakh_midi"
+    path: "data/raw/lakh_midi"
+    sample_size: 10
+wandb:
+  project: "symbolic-music-similarity"
+  entity: "wimu-team-6-proj-3"
