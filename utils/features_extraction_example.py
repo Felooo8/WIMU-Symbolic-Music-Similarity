@@ -35,8 +35,9 @@ def main():
     )
 
     print("\nDownloading artifact from W&B...")
+    processed_dir = "../data/processed"
     artifact = run.use_artifact('sampled-symbolic-datasets:latest', type='dataset')
-    artifact_dir = artifact.download()
+    artifact_dir = artifact.download(root=processed_dir)
 
     search_pattern = os.path.join(artifact_dir, "**", "*.json")
     json_files = glob.glob(search_pattern, recursive=True)
