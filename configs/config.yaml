@@ -1,16 +1,18 @@
+wandb:
+  project: "symbolic-music-similarity"
+  entity: "wimu-team-6-proj-3"
+
 datasets:
-  maestro:
+  maestro_v3:
     name: "maestro_v3"
-    path: "data/raw/maestro"
+    path: "data/raw/maestro_v3"
     sample_size: 10
-  nes_mdb:
-      name: "nes_mdb"
-      path: "data/raw/nes_mdb"
-      sample_size: 10
   lakh_midi:
     name: "lakh_midi"
     path: "data/raw/lakh_midi"
     sample_size: 10
-wandb:
-  project: "symbolic-music-similarity"
-  entity: "wimu-team-6-proj-3"
+  nes_mdb:
+    name: "nes_mdb"
+    path: "data/raw/nes_mdb"
+    sample_size: 10
+    url: "https://drive.google.com/file/d/1w2uo1Cmio4gz6nGUhZOtzF54kPkoKyo7/view"
