@@ -1,3 +1,6 @@
 .idea
 .env
 wandb
+.vscode/settings.json
+features/__pycache__/scalar.cpython-311.pyc
+ingestion/__pycache__/data_providers.cpython-311.pyc

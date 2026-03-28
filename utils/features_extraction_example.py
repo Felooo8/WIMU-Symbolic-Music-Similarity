@@ -1,20 +1,24 @@
-import wandb
-import muspy
+import sys
 import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+import wandb
 import glob
 from dotenv import load_dotenv
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
+from features.scalars import MusicScalars
 
 def process_single_file(file_path):
     try:
         filename = os.path.basename(file_path)
         dataset_name = os.path.basename(os.path.dirname(file_path))
 
-        score = muspy.load(file_path)
-        p_range = muspy.pitch_range(score)
+        music_scalars = MusicScalars(measure_resolution=1)
+        results = music_scalars.calc(file_path)
 
-        return f"[{dataset_name.upper()}] File: {filename} | Pitch Range: {p_range}"
+        return f"[{dataset_name.upper()}] File: {filename}, {music_scalars.get_as_txt()}"
     except Exception as e:
         return f"Error in {file_path}: {e}"
 
