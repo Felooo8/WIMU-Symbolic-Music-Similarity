@@ -20,14 +20,14 @@ class Histogram:
         
         if not os.path.exists(savepath):
             savepath.mkdir(parents=True, exist_ok=True)
-            print(f"\n[DISTRIBUTIONS] created savepath={savepath}")
+            print(f"\n[DISTRIBUTIONS] the savepath created (savepath={savepath})")
 
         path = os.path.join(savepath, "distributions.json")
 
         with open(path, "w", encoding="utf-8") as f:
             json.dump(self.serialized, f, ensure_ascii=False, indent=5)
 
-        print(f"\n[DISTRIBUTIONS] saved in path={path}")
+        print(f"\n[DISTRIBUTIONS] saved in filepath={path}")
 
     @staticmethod
     def save_plot(data: np.ndarray, bins: list, title: str, xlabel: str, ylabel: str, savepath: str):
