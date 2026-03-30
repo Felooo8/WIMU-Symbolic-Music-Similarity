@@ -4,6 +4,7 @@ import os
 import json
 import matplotlib.pyplot as plt
 from pathlib import Path
+from numpy.typing import ArrayLike
 
 from music_features import MusicFeatures
 
@@ -30,14 +31,13 @@ class Histogram:
         print(f"\n[DISTRIBUTIONS] saved in filepath={path}")
 
     @staticmethod
-    def save_plot(data: np.ndarray, bins: list, title: str, xlabel: str, ylabel: str, savepath: str):
+    def save_plot(data: np.ndarray, bins: ArrayLike, title: str, xlabel: str, ylabel: str, savepath: str, bin_edges: list = [], scale_type: str = 'linear'):
         plt.figure()
-        plt.bar(bins, data)
+        plt.bar(bins, data, edgecolor='black')
         plt.title(title)
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
-        if len(bins) < 20:
-            plt.xticks(bins, bins)
+        plt.xscale(scale_type)
         plt.savefig(savepath)
 
     def create_by_pitch_class(self, dataset_name: str, dataset_features: list[MusicFeatures], bin_number: int, resultpath: str):
@@ -70,7 +70,7 @@ class Histogram:
         filename = f"interval_his_dataset_{dataset_name}.png"
 
         Histogram.save_plot(data=distribution,  
-                            bins=list(range(bin_number)),
+                            bins=np.arange(-24, 25),
                             title=f"Histogram interwałów (±24 półtony)\ndatasetu {dataset_name}",
                             xlabel="Interwał",
                             ylabel="Liczba",
@@ -87,19 +87,25 @@ class Histogram:
         note_duration_min = min(dataset_durations)
         note_duration_max = max(dataset_durations)
 
-        bins = np.logspace(math.log10(note_duration_min), math.log10(note_duration_max), bin_number + 1)
-        distribution, _ = np.histogram(dataset_durations, bins=bins) 
+        bin_edges = np.logspace(math.log10(note_duration_min), math.log10(note_duration_max), bin_number + 1)
+        distribution, _ = np.histogram(dataset_durations, bins=bin_edges) 
 
         print(f"[HISTOGRAM] notes length histogram created for dataset named {dataset_name}: {distribution}")
 
         filename = f"notes_length_his_dataset_{dataset_name}.png"
 
+        bin_range = []
+        for i in range(len(bin_edges) - 1):
+            bin_range.append((bin_edges[i] + bin_edges[i + 1]) / 2.0)
+
         Histogram.save_plot(data=distribution,  
-                            bins=list(range(bin_number)),
+                            bins=bin_range,
                             title=f"Histogram długości nut\ndatasetu {dataset_name}",
                             xlabel="Długść Nut",
                             ylabel="Liczba",
-                            savepath=os.path.join(resultpath, filename))
+                            savepath=os.path.join(resultpath, filename),
+                            bin_edges=bin_edges,
+                            scale_type="log")
         
         self._add_serializable_data(dataset_name, "length_note", distribution)
         print(f"[HISTOGRAM] histogram saved as {filename}.")

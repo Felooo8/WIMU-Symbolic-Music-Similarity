@@ -29,6 +29,7 @@ def calc_intervals(music: Music):
 
 def durations(music: Music):
     durations = np.array([])
+
     for track in music.tracks:
         for note in track.notes:
             durations = np.append(durations, note.duration)
