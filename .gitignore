@@ -1,3 +1,5 @@
 .idea
 .env
 wandb
+.vscode/settings.json
+results/*
