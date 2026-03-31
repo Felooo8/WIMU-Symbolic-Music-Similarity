@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "wimu-symbolic-music-similarity"
+version = "0.1.0"
+description = "Cechy statystyczne jako proxy dla miar podobieństwa datasetów muzyki symbolicznej"
+authors = ["WIMU team 6"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.11"
+muspy = "^0.5.0"
+pretty-midi = "^0.2.10"
+music21 = "^8.1.0"
+numpy = "^1.24.0"
+scipy = "^1.10.0"
+python-dotenv = "^1.0.0"
+pyyaml = "^6.0"
+wandb = "0.25.0" #https://github.com/wandb/wandb/issues/11503
+setuptools = "<70.0.0"
+gdown = "^5.2.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.3.1"
+black = "^23.3.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
