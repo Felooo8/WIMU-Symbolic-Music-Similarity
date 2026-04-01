@@ -3,3 +3,5 @@
 wandb
 .vscode/settings.json
 results/*
+*.pyc
+data/*
