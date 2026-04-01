@@ -21,9 +21,12 @@ def calc_intervals(music: Music):
 
         for i in range(len(sorted_notes) - 1):
             interval = sorted_notes[i + 1].pitch - sorted_notes[i].pitch
-            interval = interval + 24 if -24 <= interval and interval <= 24 else interval
-
-            intervals[interval] += 1
+            # Clamp interval to range [-24, 24]
+            if -24 <= interval <= 24:
+                idx = interval + 24  # shift to [0, 48]
+                if 0 <= idx < 49:
+                    intervals[idx] += 1
+            # else: skip intervals outside the range
 
     return intervals
 

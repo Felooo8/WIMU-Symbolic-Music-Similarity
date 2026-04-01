@@ -5,6 +5,7 @@ import os
 
 import json
 from pathlib import Path
+import numpy as np
 
 from music_features import MusicFeatures
 from histograms import Histogram
@@ -18,6 +19,26 @@ class  Aggregator:
             self.sorted_datasets[set[0]].append(set[1])
 
         print("\n[AGGREGATOR] datasets sorted by its name.")
+        self.summary_stats = self._calculate_summary_stats()
+
+    def _calculate_summary_stats(self) -> dict[str, dict[str, dict[str, float]]]:
+        summary: dict[str, dict[str, dict[str, float]]] = {}
+
+        for dataset_name, dataset_features in self.sorted_datasets.items():
+            serialized_features = [feature.to_json() for feature in dataset_features]
+            summary[dataset_name] = {}
+
+            if not serialized_features:
+                continue
+
+            for key in serialized_features[0]:
+                values = np.array([row[key] for row in serialized_features], dtype=float)
+                summary[dataset_name][key] = {
+                    "mean": float(np.mean(values)),
+                    "std": float(np.std(values)),
+                }
+
+        return summary
 
     def save_features(self):
         savepath = Path(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "results", "features"))
@@ -38,6 +59,12 @@ class  Aggregator:
             json.dump(data, f, ensure_ascii=False, indent=5)
 
         print(f"\n[FEATURES] saved in path={path}")
+
+        summary_path = os.path.join(savepath, "summary_stats.json")
+        with open(summary_path, "w", encoding="utf-8") as f:
+            json.dump(self.summary_stats, f, ensure_ascii=False, indent=5)
+
+        print(f"\n[FEATURES] summary stats saved in path={summary_path}")
         
 
     def create_histograms(self):

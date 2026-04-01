@@ -105,17 +105,14 @@ make run-extraction
 # 3. Obliczenie macierzy podobieństwa (JSD, Wasserstein, Euclidean)
 make run-similarity
 
-# 4. Obliczenie FMD (wymaga GPU)
-make run-fmd
-
-# 5. Analiza korelacji i wizualizacje
-make run-analysis
-
-# 6. Uruchomienie testów
+# 4. Uruchomienie testów
 make test
 
-# 7. Uruchomienie wszystkich kroków naraz
+# 5. Uruchomienie wszystkich kroków naraz
 make all
+
+# 6. Lokalna weryfikacja artefaktów i testów
+make verify
 ```
 
 ### Konfiguracja
@@ -167,10 +164,8 @@ wandb:
 ├── tests/                    # pytest
 ├── docs/
 │   ├── literature.md         # tabela analizy literaturowej
-├── docs/
-│   ├── literature.md         # tabela analizy literaturowej
 │   ├── design_proposal.md    # design proposal projektu
-│   └── usage.md              # szczegółowa instrukcja użytkowania
+│   └── progress.md           # stan realizacji względem proposalu
 ├── Makefile
 ├── pyproject.toml
 └── README.md
@@ -179,9 +174,16 @@ wandb:
 ---
 
 ## 📊 Wyniki (uzupełniane na bieżąco)
+Obecna implementacja zapisuje wyniki pośrednie i artefakty wizualne do katalogu `results/`, w szczególności:
 
-Wyniki eksperymentów (macierze podobieństwa, wartości FMD, korelacje Spearmana) publikowane są w katalogu `results/` oraz śledzone na W&B:  
-🔗 [Dashboard W&B](https://wandb.ai/<team_name>/wimu-proj3) _(link aktywny po uruchomieniu eksperymentów)_
+- histogramy rozkładów cech dla datasetów,
+- plik `results/distributions/distributions.json`,
+- plik `results/features/features.json`,
+- plik `results/features/summary_stats.json`,
+- plik `results/similarity/jsd_matrix.json`,
+- mapa cieplna `results/similarity/heatmap.png`.
+
+Aktualny stan funkcjonalny projektu opisaliśmy także w `docs/progress.md`. Moduły FMD, badanie odsłuchowe i analiza korelacji pozostają etapami planowanymi.
 
 ---
 
