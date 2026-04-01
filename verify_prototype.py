@@ -2,6 +2,7 @@
 import logging
 import os
 import subprocess
+import sys
 from pathlib import Path
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
@@ -27,7 +28,8 @@ def check_prototype_readiness() -> None:
     for path in required_files:
         _remove_if_exists(path)
 
-    _run_check(["python", "-m", "pytest", "tests/", "-v", "--tb=short"])
+    _run_check([sys.executable, "-m", "pytest", "tests/", "-v", "--tb=short"])
+    #_run_check(["python", "-m", "pytest", "tests/", "-v", "--tb=short"])
 
     if os.getenv("WANDB_API_KEY"):
         _run_check(["make", "download-data"])
