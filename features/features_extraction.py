@@ -64,7 +64,6 @@ def main():
         #    print(future.result())
 
     logging.info("-" * 60)
-    wandb.finish()
 
     data = [item.result() for item in futures if item.result() is not None]
     if len(data) > 0:
