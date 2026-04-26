@@ -8,6 +8,7 @@ from pathlib import Path
 
 from music_features import MusicFeatures
 from histograms import Histogram
+import logging
 
 class  Aggregator:
     def __init__(self, unsorted_datasets: list[tuple[str, MusicFeatures]]):
@@ -17,14 +18,14 @@ class  Aggregator:
             self.sorted_datasets.setdefault(set[0], [])
             self.sorted_datasets[set[0]].append(set[1])
 
-        print("\n[AGGREGATOR] datasets sorted by its name.")
+        logging.info("\n[AGGREGATOR] datasets sorted by its name.")
 
     def save_features(self):
         savepath = Path(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "results", "features"))
         
         if not os.path.exists(savepath):
             savepath.mkdir(parents=True, exist_ok=True)
-            print(f"\n[FEATURES] created savepath={savepath}")
+            logging.info(f"\n[FEATURES] created savepath={savepath}")
 
         path = os.path.join(savepath, "features.json")
 
@@ -37,14 +38,14 @@ class  Aggregator:
         with open(path, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=5)
 
-        print(f"\n[FEATURES] saved in path={path}")
+        logging.info(f"\n[FEATURES] saved in path={path}")
         
 
     def create_histograms(self):
         resultpath = Path(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "results", "histograms"))
         if not os.path.exists(resultpath):
             resultpath.mkdir(parents=True, exist_ok=True)
-            print(f"\n[HISTOGRAM] created resultpath={resultpath}")
+            logging.info(f"\n[HISTOGRAM] created resultpath={resultpath}")
 
         his = Histogram()
 

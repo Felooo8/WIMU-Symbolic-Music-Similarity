@@ -3,3 +3,8 @@
 wandb
 .vscode/settings.json
 results/*
+features/__pycache__/*.pyc
+ingestion/__pycache__/*.pyc
+similarity/__pycache__/*.pyc
+tests/__pycache__/*.pyc
+data/*

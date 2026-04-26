@@ -3,10 +3,12 @@ import wandb
 import glob
 import json
 from dotenv import load_dotenv
-from concurrent.futures import ProcessPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor
+import logging
 
 from music_features import MusicFeatures
 from aggregation import Aggregator
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
 def process_single_file(file_path: str):
     try:
@@ -16,11 +18,11 @@ def process_single_file(file_path: str):
         music_features = MusicFeatures(measure_resolution=1)
         music_features.calc(file_path)
 
-        print(f"[{dataset_name.upper()}] File: {filename}, features:\n {json.dumps(music_features.to_json(), ensure_ascii=False, indent=5)}")
+        logging.info(f"[{dataset_name.upper()}] File: {filename}, genre:{music_features.genre} \features:\n {json.dumps(music_features.to_json(), ensure_ascii=False, indent=5)}")
 
         return dataset_name, music_features
     except Exception as e:
-        print(f"Error in {file_path}: {e}")
+        logging.error(f"Error in {file_path}: {e}")
         return None
 
 
@@ -39,7 +41,7 @@ def main():
         name="parallel-feature-extraction"
     )
 
-    print("\nDownloading artifact from W&B...")
+    logging.info("\nDownloading artifact from W&B...")
     processed_dir = "../data/processed"
     artifact = run.use_artifact('sampled-symbolic-datasets:latest', type='dataset')
     artifact_dir = artifact.download(root=processed_dir)
@@ -48,12 +50,12 @@ def main():
     json_files = glob.glob(search_pattern, recursive=True)
 
     if not json_files:
-        print("Json files not found in W&B.")
+        logging.error("Json files not found in W&B.")
         wandb.finish()
         return
 
-    print(f"\nFound {len(json_files)} files. Starting analysis of features...\n")
-    print("-" * 60)
+    logging.error(f"\nFound {len(json_files)} files. Starting analysis of features...\n")
+    logging.error("-" * 60)
 
     with ProcessPoolExecutor() as executor:
         futures = [executor.submit(process_single_file, f) for f in json_files]
@@ -61,12 +63,12 @@ def main():
         #for future in as_completed(futures):
         #    print(future.result())
 
-    print("-" * 60)
+    logging.info("-" * 60)
     wandb.finish()
 
     data = [item.result() for item in futures if item.result() is not None]
     if len(data) > 0:
-        print("\nParallel extraction successfully completed!")
+        logging.info("\nParallel extraction successfully completed!")
         aggregator = Aggregator(data)
         aggregator.save_features()
         aggregator.create_histograms()
