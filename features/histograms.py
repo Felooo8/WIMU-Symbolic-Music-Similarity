@@ -90,7 +90,7 @@ class Histogram:
                 ax[r, c].axis("off")
 
         else:
-            plt.title(title + f" for genre: {genres[0]} (liczba utworów: {len(data[0])})")
+            plt.title(title + f" dla gatunku {genres[0]} (liczba utworów: {len(data[0])})")
 
             plt.bar(bins, data[0], edgecolor="black")
             plt.xlabel(xlabel)

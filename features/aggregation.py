@@ -1,8 +1,11 @@
+#import sys
 import os
+
+#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import json
 from pathlib import Path
 import numpy as np
-import logging
 
 from music_features import MusicFeatures
 from histograms import Histogram
@@ -15,22 +18,38 @@ class  Aggregator:
             self.sorted_datasets.setdefault(set[0], [])
             self.sorted_datasets[set[0]].append(set[1])
 
-        logging.info("\n[AGGREGATOR] datasets sorted by its name.")
+        print("\n[AGGREGATOR] datasets sorted by its name.")
         self.summary_stats = self._calculate_summary_stats()
 
     def _calculate_summary_stats(self) -> dict[str, dict[str, dict[str, float]]]:
         summary: dict[str, dict[str, dict[str, float]]] = {}
 
-        for dataset_name, dataset_features in self.sorted_datasets.items():
-            serialized_features = [feature.to_json() for feature in dataset_features]
-            summary[dataset_name] = {}
+        all_features = []
+        for dataset_features in self.sorted_datasets.values():
+            all_features.extend([f.to_json() for f in dataset_features])
 
-            if not serialized_features:
-                continue
+        if not all_features:
+            return summary
 
-            for key in serialized_features[0]:
-                values = np.array([row[key] for row in serialized_features], dtype=float)
-                summary[dataset_name][key] = {
+        genres = list(set(row['genre'] for row in all_features))
+
+        for genre in genres:
+            genre_features = [row for row in all_features if row['genre'] == genre]
+            summary[genre] = {}
+
+            for key in all_features[0].keys():
+                if key == "genre":
+                    continue
+
+                values = np.array(
+                    [row[key] for row in genre_features if not isinstance(row[key], str)],
+                    dtype=float
+                )
+
+                if len(values) == 0:
+                    continue
+
+                summary[genre][key] = {
                     "mean": float(np.mean(values)),
                     "std": float(np.std(values)),
                 }
@@ -55,20 +74,20 @@ class  Aggregator:
         with open(path, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=5)
 
-        logging.info(f"\n[FEATURES] saved in path={path}")
+        print(f"\n[FEATURES] saved in path={path}")
 
         summary_path = os.path.join(savepath, "summary_stats.json")
         with open(summary_path, "w", encoding="utf-8") as f:
             json.dump(self.summary_stats, f, ensure_ascii=False, indent=5)
 
-        logging.info(f"\n[FEATURES] summary stats saved in path={summary_path}")
+        print(f"\n[FEATURES] summary stats saved in path={summary_path}")
         
 
     def create_histograms(self):
         resultpath = Path(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "results", "histograms"))
         if not os.path.exists(resultpath):
             resultpath.mkdir(parents=True, exist_ok=True)
-            logging.info(f"\n[HISTOGRAM] created resultpath={resultpath}")
+            print(f"\n[HISTOGRAM] created resultpath={resultpath}")
 
         his = Histogram()
 
@@ -78,3 +97,4 @@ class  Aggregator:
             his.create_by_notes_length(name, dataset_features, 16, resultpath)
 
         his.save_to_json()
+    
