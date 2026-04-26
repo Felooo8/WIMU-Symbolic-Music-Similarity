@@ -65,7 +65,9 @@ def main():
 
     logging.info("-" * 60)
 
-    data = [item.result() for item in futures if item.result() is not None]
+    result = [item.result() for item in futures]
+    data = [item for item in result if item is not None]
+    
     if len(data) > 0:
         logging.info("\nParallel extraction successfully completed!")
         aggregator = Aggregator(data)

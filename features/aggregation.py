@@ -42,7 +42,8 @@ class  Aggregator:
                     continue
 
                 values = np.array(
-                    [row[key] for row in genre_features if not isinstance(row[key], str)],
+                    [row[key] for row in genre_features if not isinstance(row[key], str)
+                    and not np.isnan(row[key])],
                     dtype=float
                 )
 
@@ -50,8 +51,8 @@ class  Aggregator:
                     continue
 
                 summary[genre][key] = {
-                    "mean": float(np.mean(values)),
-                    "std": float(np.std(values)),
+                    "mean": float(np.nanmean(values)),
+                    "std": float(np.nanstd(values)),
                 }
 
         return summary
