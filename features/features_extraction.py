@@ -55,7 +55,7 @@ def main():
         return
 
     logging.error(f"\nFound {len(json_files)} files. Starting analysis of features...\n")
-    logging.error("-" * 60)
+    logging.info("-" * 60)
 
     with ProcessPoolExecutor() as executor:
         futures = [executor.submit(process_single_file, f) for f in json_files]
@@ -72,6 +72,35 @@ def main():
         aggregator = Aggregator(data)
         aggregator.save_features()
         aggregator.create_histograms()
+    
+    if len(data) > 0:
+        print("\nLogging to WandB...")
+        
+        total_processed = len(data)
+        error_rate = (len(json_files) - total_processed) / len(json_files)
+        
+        wandb.log({
+            "total_files": len(json_files),
+            "files_processed": total_processed,
+            "error_rate": error_rate,
+            "datasets": {"maestro_v3": sum(1 for d, _ in data if d == "maestro_v3"),
+                        "lakh_midi": sum(1 for d, _ in data if d == "lakh_midi"),
+                        "nes_mdb": sum(1 for d, _ in data if d == "nes_mdb")}
+        })
+        
+        sample_features = [{"dataset": d, **mf.to_json()} for d, mf in data[:10]]
+        if sample_features:
+            columns = list(sample_features[0].keys())
+            rows = [[item[column] for column in columns] for item in sample_features]
+            wandb.log({"sample_features": wandb.Table(columns=columns, data=rows)})
+        
+        aggregator = Aggregator(data)
+        summary_stats = aggregator.summary_stats
+        wandb.log(summary_stats)
+        
+        print("✅ Logged to WandB!")
+
+    wandb.finish()
 
 
 if __name__ == "__main__":

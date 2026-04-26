@@ -5,7 +5,6 @@ from muspy import Music
 import json
 import logging
 import yaml
-import pretty_midi
 
 
 def calc_pitch_class(music: Music):
