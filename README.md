@@ -102,8 +102,11 @@ make download-data
 # 2. Ekstrakcja cech statystycznych
 make run-extraction
 
-# 3. Obliczenie macierzy podobieństwa (JSD, Wasserstein, Euclidean)
+# 3. Obliczenie macierzy podobieństwa JSD
 make run-similarity
+
+# 3b. Obliczenie macierzy podobieństwa Wasserstein (Earth Mover's Distance)
+make run-wasserstein
 
 # 4. Uruchomienie testów
 make test
@@ -181,9 +184,34 @@ Obecna implementacja zapisuje wyniki pośrednie i artefakty wizualne do katalogu
 - plik `results/features/features.json`,
 - plik `results/features/summary_stats.json`,
 - plik `results/similarity/jsd_matrix.json`,
+- plik `results/similarity/wasserstein_matrix.json`,
 - mapa cieplna `results/similarity/heatmap.png`.
 
 Aktualny stan funkcjonalny projektu opisaliśmy także w `docs/progress.md`. Moduły FMD, badanie odsłuchowe i analiza korelacji pozostają etapami planowanymi.
+
+### Wasserstein Distance Matrix (Earth Mover's Distance)
+
+| Para datasetów          | pitch_class | interval | length_note |  average  |
+| ----------------------- | :---------: | :------: | :---------: | :-------: |
+| lakh_midi vs maestro_v3 |    0.641    |  5.309   |    2.063    | **2.671** |
+| lakh_midi vs nes_mdb    |    1.702    |  2.480   |    4.653    | **2.945** |
+| maestro_v3 vs nes_mdb   |    1.207    |  6.568   |    3.741    | **3.839** |
+
+Wyniki są muzycznie sensowne: para `maestro_v3 vs nes_mdb` wykazuje największy
+dystans (3.839 average), co odzwierciedla dużą różnicę między klasyczną muzyką
+fortepianową a chiptune, czyli muzyką 8-bitową. Najsilniej widać to w rozkładzie
+interwałów (`interval = 6.568`), gdzie oba datasety różnią się najbardziej.
+
+Para `lakh_midi vs maestro_v3` ma najniższy średni dystans (2.671), co sugeruje,
+że szeroki, wielogatunkowy zbiór Lakh MIDI zawiera materiał bliższy klasycznym
+strukturom wysokościowym niż NES-MDB. Z kolei `lakh_midi vs nes_mdb` mocniej
+różni się w rozkładzie długości nut (`length_note = 4.653`), czyli w profilu
+rytmicznym / czasowym.
+
+Wasserstein distance, w odróżnieniu od JSD, uwzględnia metrykę osi X histogramu:
+przesunięcie masy o jeden bin jest traktowane jako mniejsza różnica niż
+przesunięcie o wiele binów. Dzięki temu metryka lepiej oddaje intuicję, że
+podobne interwały albo długości nut powinny być bliższe niż wartości odległe.
 
 ---
 

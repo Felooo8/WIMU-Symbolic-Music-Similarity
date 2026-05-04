@@ -127,6 +127,7 @@ muspy_stub = types.SimpleNamespace(
     Note=_Note,
     save=_save,
     load=_load,
+    load_json=_load,
     pitch_class_entropy=_pitch_class_entropy,
     pitch_entropy=_pitch_entropy,
     pitch_range=_pitch_range,
@@ -154,11 +155,32 @@ def _jensen_shannon(p, q, base=2):
     return float(math.sqrt(js))
 
 
+def _wasserstein_distance(u_values, v_values, u_weights=None, v_weights=None):
+    u_values = np.array(u_values, dtype=float)
+    v_values = np.array(v_values, dtype=float)
+    u_weights = np.array(u_weights if u_weights is not None else np.ones_like(u_values), dtype=float)
+    v_weights = np.array(v_weights if v_weights is not None else np.ones_like(v_values), dtype=float)
+    u_weights = u_weights / u_weights.sum()
+    v_weights = v_weights / v_weights.sum()
+
+    support = np.unique(np.concatenate([u_values, v_values]))
+    distance = 0.0
+    prev = support[0]
+    for x in support[1:]:
+        u_cdf = u_weights[u_values <= prev].sum()
+        v_cdf = v_weights[v_values <= prev].sum()
+        distance += abs(u_cdf - v_cdf) * (x - prev)
+        prev = x
+    return float(distance)
+
+
 scipy_distance_stub = types.SimpleNamespace(jensenshannon=_jensen_shannon)
+scipy_stats_stub = types.SimpleNamespace(wasserstein_distance=_wasserstein_distance)
 scipy_spatial_stub = types.SimpleNamespace(distance=scipy_distance_stub)
-scipy_stub = types.SimpleNamespace(spatial=scipy_spatial_stub)
+scipy_stub = types.SimpleNamespace(spatial=scipy_spatial_stub, stats=scipy_stats_stub)
 
 sys.modules.setdefault("muspy", muspy_stub)
 sys.modules.setdefault("scipy", scipy_stub)
 sys.modules.setdefault("scipy.spatial", scipy_spatial_stub)
 sys.modules.setdefault("scipy.spatial.distance", scipy_distance_stub)
+sys.modules.setdefault("scipy.stats", scipy_stats_stub)

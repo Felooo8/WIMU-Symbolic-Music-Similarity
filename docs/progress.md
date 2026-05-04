@@ -9,10 +9,11 @@
 - ✅ Literature analysis: `docs/literature.md` completed.
 - ✅ Environment: Poetry + Weights & Biases integration.
 - ✅ Tests: new `pytest` suite for feature extraction, histograms, similarity, and E2E flow.
+- ✅ Wasserstein metric for histogram-based dataset comparison.
 
 ## ⏳ Pending (next week)
 
 - FMD computation (GPU)
-- Wasserstein / Euclidean metrics
+- Euclidean metrics
 - Listening study
 - Spearman correlation analysis
