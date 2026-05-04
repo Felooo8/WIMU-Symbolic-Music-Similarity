@@ -23,3 +23,6 @@ test:
 
 verify:
 	poetry run python verify_prototype.py
+
+run-wasserstein:
+	poetry run python similarity/wasserstein.py
