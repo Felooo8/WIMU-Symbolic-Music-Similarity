@@ -1,4 +1,4 @@
-.PHONY: install clean download-data run-extraction run-similarity test verify all
+.PHONY: install clean download-data run-extraction run-similarity run-wasserstein test verify all
 
 all: install download-data run-extraction run-similarity
 
@@ -23,3 +23,6 @@ test:
 
 verify:
 	poetry run python verify_prototype.py
+
+run-wasserstein:
+	poetry run python similarity/wasserstein.py

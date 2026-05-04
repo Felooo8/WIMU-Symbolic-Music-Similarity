@@ -33,10 +33,12 @@ def test_histogram_creation_serialization(tmp_path):
     assert (result_dir / "interval_his_dataset_demo.png").exists()
     assert (result_dir / "notes_length_his_dataset_demo.png").exists()
 
-    assert histogram.serialized["demo"]["pitch_class"][0] == 2.0
-    assert histogram.serialized["demo"]["pitch_class"][7] == 2.0
-    assert histogram.serialized["demo"]["interval"][24] == 1.0
-    assert histogram.serialized["demo"]["interval"][25] == 1.0
+    pitch_class = histogram.serialized["demo"]["pitch_class"]["Unknown"]
+    interval = histogram.serialized["demo"]["interval"]["Unknown"]
+    assert pitch_class[0] == 2.0
+    assert pitch_class[7] == 2.0
+    assert interval[24] == 1.0
+    assert interval[25] == 1.0
 
     histogram.save_to_json()
     output = Path("results/distributions/distributions.json")

@@ -8,8 +8,9 @@ from music_features import MusicFeatures
 import check_similarity
 
 
-def _feature(seed: int) -> MusicFeatures:
+def _feature(seed: int, genre: str) -> MusicFeatures:
     feature = MusicFeatures()
+    feature.genre = genre
     feature.pitch_class[seed % 12] = 4
     feature.pitch_class[(seed + 5) % 12] = 2
     feature.intervals[24] = 5 + seed
@@ -27,9 +28,9 @@ def _feature(seed: int) -> MusicFeatures:
 
 def test_pipeline_extraction_to_similarity_outputs():
     unsorted = [
-        ("maestro", _feature(1)),
-        ("lakh", _feature(2)),
-        ("nes", _feature(3)),
+        ("maestro", _feature(1, "Classical")),
+        ("lakh", _feature(2, "Rock")),
+        ("nes", _feature(3, "Chiptune")),
     ]
     aggregator = Aggregator(unsorted)
     aggregator.save_features()
@@ -44,8 +45,9 @@ def test_pipeline_extraction_to_similarity_outputs():
     assert summary_path.exists()
 
     matrix = json.loads(matrix_path.read_text(encoding="utf-8"))
-    assert "maestro_vs_lakh" in matrix
-    assert "maestro_vs_nes" in matrix
+    assert "pitch_class" in matrix
+    assert "maestro:Classical_vs_lakh:Rock" in matrix["pitch_class"]
+    assert "maestro:Classical_vs_nes:Chiptune" in matrix["pitch_class"]
 
     summary = json.loads(summary_path.read_text(encoding="utf-8"))
-    assert "maestro" in summary
+    assert "Classical" in summary
