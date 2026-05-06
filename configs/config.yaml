@@ -3,17 +3,25 @@ wandb:
   entity: "wimu-team-6-proj-3"
 
 datasets:
+  jsb_chorales:
+    name: "jsb_chorales"
+    path: "data/raw/jsb_chorales"
+    sample_size: 400
+  music_net:
+    name: "music_net"
+    path: "data/raw/music_net"
+    sample_size: 400
   maestro_v3:
     name: "maestro_v3"
     path: "data/raw/maestro_v3"
-    sample_size: 100
+    sample_size: 400
   lakh_midi:
     name: "lakh_midi"
     path: "data/raw/lakh_midi"
     genre_file: "dataset/lakh_midi/msd_tagtraum_cd2c.cls" #https://www.tagtraum.com/msd_genre_datasets.html
-    sample_size: 100
+    sample_size: 400
   nes_mdb:
     name: "nes_mdb"
     path: "data/raw/nes_mdb"
-    sample_size: 100
+    sample_size: 400
     url: "https://drive.google.com/file/d/1w2uo1Cmio4gz6nGUhZOtzF54kPkoKyo7/view"

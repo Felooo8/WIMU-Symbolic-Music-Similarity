@@ -55,6 +55,7 @@ class NativeMuspyProvider(BaseDatasetProvider):
     _MAPPING = {
         "maestro_v3": muspy.MAESTRODatasetV3,
         "lakh_midi": muspy.LakhMIDIAlignedDataset,
+        "music_net": muspy.MusicNetDataset,
     }
 
     def prepare_and_get_dataset(self):
@@ -82,6 +83,24 @@ class NativeMuspyProvider(BaseDatasetProvider):
             except Exception as e:
                 logging.warning(f"[lakh_midi] Track ID error: {e}")
         return None
+
+
+class Music21JsbProvider(BaseDatasetProvider):
+
+    def prepare_and_get_dataset(self):
+        from music21 import corpus
+        all_paths = corpus.getComposer("bach")
+        self._paths = [p for p in all_paths if "bwv" in str(p).lower()]
+        logging.info(f"[jsb_chorales] Found {len(self._paths)} chorales in music21 corpus")
+        return self
+
+    def __len__(self):
+        return len(self._paths)
+
+    def __getitem__(self, index):
+        from music21 import corpus
+        score = corpus.parse(self._paths[index])
+        return muspy.from_music21(score)
 
 
 class NesMdbProvider(BaseDatasetProvider):
@@ -114,5 +133,7 @@ class DatasetFactory:
             return NativeMuspyProvider(dataset_cfg)
         elif name == "nes_mdb":
             return NesMdbProvider(dataset_cfg)
+        elif name == "jsb_chorales":
+            return Music21JsbProvider(dataset_cfg)
         else:
             raise ValueError(f"Unsupported dataset configuration: {name}")

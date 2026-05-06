@@ -106,6 +106,10 @@ def main():
                 genre = "Classical music (piano)"
             elif dataset_key.lower() == "nes_mdb":
                 genre = "Chiptune (8-bit music)"
+            elif dataset_key.lower() == "jsb_chorales":
+                genre = "Baroque (chorales)"
+            elif dataset_key.lower() == "music_net":
+                genre = "Classical (chamber music)"
             else:
                 genre = "Unknown"
 

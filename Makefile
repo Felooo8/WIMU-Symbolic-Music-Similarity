@@ -1,4 +1,4 @@
-.PHONY: install clean download-data run-extraction run-similarity run-wasserstein test verify all
+.PHONY: install clean download-data download-artifact run-extraction run-similarity run-wasserstein run-fmd run-euclidean run-correlation test verify all
 
 all: install download-data run-extraction run-similarity
 
@@ -11,6 +11,9 @@ clean:
 
 download-data:
 	poetry run python ingestion/dataset-ingestion.py
+
+download-artifact:
+	poetry run python ingestion/download_artifact.py
 
 run-extraction:
 	poetry run python features/features_extraction.py
@@ -26,3 +29,15 @@ verify:
 
 run-wasserstein:
 	poetry run python similarity/wasserstein.py
+
+run-euclidean:
+	poetry run python similarity/euclidean.py
+
+SAMPLE ?=
+
+run-fmd:
+	poetry run python fmd/compute_fmd.py $(if $(SAMPLE),--sample $(SAMPLE),)
+
+run-correlation:
+    poetry run python analysis/correlation.py
+

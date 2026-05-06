@@ -194,6 +194,7 @@ class Histogram:
 
         for i, genre in enumerate(unique_genres):
             data = np.array(genre_durations[genre])
+            data = data[data > 0]
 
             if len(data) == 0:
                 continue
