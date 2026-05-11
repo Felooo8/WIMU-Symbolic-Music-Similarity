@@ -15,21 +15,6 @@ def _load_json(path: Path) -> dict:
         return json.load(f)
 
 
-def _aggregate_jsd_to_dataset_pairs(raw: dict[str, float]) -> dict[str, float]:
-    buckets: dict[str, list[float]] = {}
-    for key, value in raw.items():
-        if "_vs_" not in key:
-            continue
-        left, right = key.split("_vs_", 1)
-        left_dataset = left.split(":")[0]
-        right_dataset = right.split(":")[0]
-        if left_dataset == right_dataset:
-            continue
-        pair_key = "_vs_".join(sorted([left_dataset, right_dataset]))
-        buckets.setdefault(pair_key, []).append(value)
-    return {k: float(np.mean(v)) for k, v in buckets.items()}
-
-
 class SpearmanAnalysis:
     def __init__(self, similarity_dir: Path, output_dir: Path):
         self.similarity_dir = similarity_dir
@@ -38,6 +23,7 @@ class SpearmanAnalysis:
     def run(self) -> dict:
         fmd = self._load_fmd()
         metrics = self._load_metrics()
+        metrics.update(self._compute_ensembles(metrics))
         pairs = sorted(fmd.keys())
 
         logging.info(f"[CORR] Dataset pairs: {pairs}")
@@ -68,7 +54,7 @@ class SpearmanAnalysis:
         if jsd_path.exists():
             jsd_raw = _load_json(jsd_path)
             for dist_type, pairs in jsd_raw.items():
-                metrics[f"jsd_{dist_type}"] = _aggregate_jsd_to_dataset_pairs(pairs)
+                metrics[f"jsd_{dist_type}"] = pairs
 
         wass_path = self.similarity_dir / "wasserstein_matrix.json"
         if wass_path.exists():
@@ -84,9 +70,41 @@ class SpearmanAnalysis:
         eucl_path = self.similarity_dir / "euclidean_matrix.json"
         if eucl_path.exists():
             eucl_raw = _load_json(eucl_path)["euclidean_matrix"]
-            metrics["euclidean"] = {pair: v["euclidean"] for pair, v in eucl_raw.items()}
+            all_eucl_keys = {k for v in eucl_raw.values() for k in v}
+            for key in sorted(all_eucl_keys):
+                metrics[key] = {pair: v[key] for pair, v in eucl_raw.items() if key in v}
+
+        mahal_path = self.similarity_dir / "mahalanobis_matrix.json"
+        if mahal_path.exists():
+            mahal_raw = _load_json(mahal_path)["mahalanobis_matrix"]
+            metrics["mahalanobis"] = {pair: v["mahalanobis"] for pair, v in mahal_raw.items()}
 
         return metrics
+
+    @staticmethod
+    def _z_normalize(values: dict[str, float]) -> dict[str, float]:
+        arr = np.array(list(values.values()), dtype=float)
+        std = arr.std()
+        if std == 0:
+            return {k: 0.0 for k in values}
+        mean = arr.mean()
+        return {k: (v - mean) / std for k, v in values.items()}
+
+    def _combine(self, metrics: dict, component_names: list[str]) -> dict[str, float]:
+        available = [n for n in component_names if n in metrics]
+        if not available:
+            return {}
+        normalized = {n: self._z_normalize(metrics[n]) for n in available}
+        all_pairs = set.intersection(*[set(v.keys()) for v in normalized.values()])
+        return {pair: sum(normalized[n][pair] for n in available) for pair in all_pairs}
+
+    def _compute_ensembles(self, metrics: dict) -> dict[str, dict[str, float]]:
+        ensembles = {
+            "ensemble_intervals": self._combine(metrics, ["jsd_interval", "interval_wasserstein"]),
+            "ensemble_interval_mahal": self._combine(metrics, ["jsd_interval", "mahalanobis"]),
+            "ensemble_top3": self._combine(metrics, ["jsd_interval", "interval_wasserstein", "mahalanobis"]),
+        }
+        return {k: v for k, v in ensembles.items() if v}
 
     @staticmethod
     def _spearman(

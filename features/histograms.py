@@ -181,47 +181,43 @@ class Histogram:
         resultpath: str
     ):
         unique_genres = list(set(f.genre for f in dataset_features))
-
         distributions = np.zeros((len(unique_genres), bin_number))
-
         genre_durations = {genre: [] for genre in unique_genres}
 
         for features in dataset_features:
             genre_durations[features.genre].extend(features.durations)
 
+        all_data = np.concatenate([np.array(genre_durations[g]) for g in unique_genres]) if unique_genres else np.array([])
+        all_data = all_data[all_data > 0]
 
-        bin_edges = None
+        if len(all_data) > 0:
+            mn, mx = all_data.min(), all_data.max()
+            if mn == mx:
+                mx += 1e-6
+            bin_edges = np.logspace(math.log10(mn), math.log10(mx), bin_number + 1)
+        else:
+            bin_edges = np.logspace(-2, 2, bin_number + 1) # Fallback
+
+        bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
+
+        self.serialized.setdefault(dataset_name, {})
+        self.serialized[dataset_name]["length_note_bins"] = bin_centers.tolist()
 
         for i, genre in enumerate(unique_genres):
             data = np.array(genre_durations[genre])
             data = data[data > 0]
-
             if len(data) == 0:
                 continue
-
-            mn, mx = data.min(), data.max()
-
-            if mn == mx:
-                mx += 1e-6
-
-            bin_edges = np.logspace(
-                math.log10(mn),
-                math.log10(mx),
-                bin_number + 1
-            )
-
             distributions[i], _ = np.histogram(data, bins=bin_edges)
 
         logging.info(f"[HISTOGRAM] notes length histogram created")
 
         filename = f"notes_length_his_dataset_{dataset_name}.png"
 
-        bin_range = (bin_edges[:-1] + bin_edges[1:]) / 2
-
         Histogram.save_plot(
             data=distributions,
             genres=unique_genres,
-            bins=bin_range,
+            bins=bin_centers,
             title=f"Histogram długości nut\n{dataset_name}",
             xlabel="Długość nut",
             ylabel="Liczba",

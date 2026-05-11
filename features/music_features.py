@@ -44,7 +44,7 @@ def durations(music: Music):
 
 
 class MusicFeatures:
-    def __init__(self, measure_resolution: int = 1):
+    def __init__(self, measure_resolution: int = 16):
         self.measure_resolution = measure_resolution
 
         self.genre = "Unknown"

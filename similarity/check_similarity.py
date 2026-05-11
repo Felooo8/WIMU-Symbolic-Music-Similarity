@@ -1,7 +1,7 @@
 import os
 import json
 from pathlib import Path
-from itertools import product
+from itertools import combinations
 
 from jsd import calc_jsd
 import matplotlib.pyplot as plt
@@ -11,23 +11,26 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
 
-def _distribution_items(dataset_name: str, dataset_data: dict, dist_type: str):
-    values = dataset_data.get(dist_type, {})
+def _aggregate_histogram(dataset_data: dict, key: str) -> np.ndarray:
+    values = dataset_data.get(key)
+    if values is None:
+        raise KeyError(f"Missing histogram '{key}' in dataset data")
+
+    if isinstance(values, list):
+        return np.asarray(values, dtype=float)
 
     if isinstance(values, dict):
-        items = [(genre, data) for genre, data in values.items() if genre != "Unknown"]
-        if not items:
-            items = list(values.items())
-    else:
-        items = [(dataset_name, values)]
+        vectors = [np.asarray(v, dtype=float) for genre, v in values.items() if genre != "Unknown"]
+        if not vectors:
+            vectors = [np.asarray(v, dtype=float) for v in values.values()]
+        if not vectors:
+            raise ValueError(f"Histogram '{key}' has no values")
+        lengths = {vec.size for vec in vectors}
+        if len(lengths) != 1:
+            raise ValueError(f"Histogram '{key}' has inconsistent bin counts: {lengths}")
+        return np.sum(vectors, axis=0)
 
-    for genre, data in items:
-        yield {
-            "dataset": dataset_name,
-            "label": f"{dataset_name}:{genre}",
-            "type": dist_type,
-            "data": data,
-        }
+    raise TypeError(f"Unsupported histogram format for '{key}': {type(values)}")
 
 
 def _save_jsd_heatmap(matrix: np.ndarray, names: list[str], dist_type: str, similarity_path: Path):
@@ -39,14 +42,7 @@ def _save_jsd_heatmap(matrix: np.ndarray, names: list[str], dist_type: str, simi
 
     for i in range(len(names)):
         for j in range(len(names)):
-            plt.text(
-                j,
-                i,
-                f"{matrix[i, j]:.2f}",
-                ha="center",
-                va="center",
-                fontsize=8,
-            )
+            plt.text(j, i, f"{matrix[i, j]:.2f}", ha="center", va="center", fontsize=8)
 
     plt.title(f"JSD Heatmap - {dist_type}")
     plt.xticks(range(len(names)), names, rotation=90)
@@ -70,9 +66,9 @@ def main():
         )
     )
 
-    path = os.path.join(distribution_path, "distributions.json")
+    path = distribution_path / "distributions.json"
 
-    if not os.path.exists(path) or os.path.getsize(path) == 0:
+    if not path.exists() or path.stat().st_size == 0:
         logging.error("[ERROR] distributions.json missing or empty")
         return
 
@@ -90,27 +86,27 @@ def main():
     )
     similarity_path.mkdir(parents=True, exist_ok=True)
 
+    dataset_names = sorted(datasets.keys())
     jsd_results = {}
 
     for dist_type in ["pitch_class", "interval"]:
-        entries = [
-            entry
-            for dataset_name, dataset_data in datasets.items()
-            for entry in _distribution_items(dataset_name, dataset_data, dist_type)
-        ]
-        names = sorted({entry["label"] for entry in entries})
-        name_to_index = {name: idx for idx, name in enumerate(names)}
-        matrix = np.zeros((len(names), len(names)))
+        histograms = {name: _aggregate_histogram(datasets[name], dist_type) for name in dataset_names}
+
+        n = len(dataset_names)
+        name_to_index = {name: i for i, name in enumerate(dataset_names)}
+        matrix = np.zeros((n, n))
         dist_results = {}
 
-        for a, b in product(entries, repeat=2):
-            jsd = float(calc_jsd(a["data"], b["data"]))
-            key = f'{a["label"]}_vs_{b["label"]}'
-            dist_results[key] = jsd
-            matrix[name_to_index[a["label"]], name_to_index[b["label"]]] = jsd
+        for left, right in combinations(dataset_names, 2):
+            jsd = float(calc_jsd(histograms[left].tolist(), histograms[right].tolist()))
+            pair_key = f"{left}_vs_{right}"
+            dist_results[pair_key] = jsd
+            i, j = name_to_index[left], name_to_index[right]
+            matrix[i, j] = jsd
+            matrix[j, i] = jsd
 
         jsd_results[dist_type] = dist_results
-        _save_jsd_heatmap(matrix, names, dist_type, similarity_path)
+        _save_jsd_heatmap(matrix, dataset_names, dist_type, similarity_path)
 
     with (similarity_path / "jsd_matrix.json").open("w", encoding="utf-8") as f:
         json.dump(jsd_results, f, ensure_ascii=False, indent=2)

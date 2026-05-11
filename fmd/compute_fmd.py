@@ -5,8 +5,14 @@ import tempfile
 from itertools import combinations
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import muspy
+import muspy.outputs.midi as _muspy_midi_out
+import numpy as np
 import wandb
+
+# CLAMP2 (and pretty_midi) only accept flat key names; muspy defaults to sharps
+_muspy_midi_out.PITCH_NAMES = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
 from dotenv import load_dotenv
 from frechet_music_distance import FrechetMusicDistance
 
@@ -14,6 +20,35 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
 WANDB_PROJECT = "symbolic-music-similarity"
 WANDB_ENTITY = "wimu-team-6-proj-3"
+
+
+def _save_heatmap(pair_values: dict[str, float], names: list[str], title: str, save_path: Path) -> None:
+    n = len(names)
+    name_to_idx = {name: i for i, name in enumerate(names)}
+    matrix = np.zeros((n, n))
+    for pair_key, value in pair_values.items():
+        if "_vs_" not in pair_key:
+            continue
+        left, right = pair_key.split("_vs_", 1)
+        if left in name_to_idx and right in name_to_idx:
+            i, j = name_to_idx[left], name_to_idx[right]
+            matrix[i, j] = value
+            matrix[j, i] = value
+
+    fig_size = max(8, n * 1.2)
+    plt.figure(figsize=(fig_size, fig_size * 0.85))
+    plt.imshow(matrix, cmap="viridis")
+    for i in range(n):
+        for j in range(n):
+            plt.text(j, i, f"{matrix[i, j]:.1f}", ha="center", va="center", fontsize=7)
+    plt.title(title)
+    plt.xticks(range(n), names, rotation=45, ha="right")
+    plt.yticks(range(n), names)
+    plt.colorbar()
+    plt.tight_layout()
+    plt.savefig(save_path, dpi=600, bbox_inches="tight")
+    plt.close()
+    logging.info(f"[HEATMAP] saved: {save_path}")
 
 
 def _remove_invalid_midi(midi_dir: Path) -> int:
@@ -99,6 +134,11 @@ class FMDPipeline:
         with output_path.open("w", encoding="utf-8") as f:
             json.dump({"fmd_matrix": matrix}, f, indent=2, ensure_ascii=False)
         logging.info(f"[FMD] Saved matrix: {output_path}")
+
+        pair_values = {pair: vals["fmd"] for pair, vals in matrix.items()}
+        names = sorted({name for pair in matrix for name in pair.split("_vs_", 1)})
+        _save_heatmap(pair_values, names, "FMD Heatmap", self.output_dir / "heatmap_fmd.png")
+
         return output_path
 
 

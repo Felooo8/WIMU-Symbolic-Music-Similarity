@@ -1,4 +1,4 @@
-.PHONY: install clean download-data download-artifact run-extraction run-similarity run-wasserstein run-fmd run-euclidean run-correlation test verify all
+.PHONY: install clean download-data download-artifact run-extraction run-similarity run-wasserstein run-fmd run-euclidean run-mahalanobis run-correlation test verify all
 
 all: install download-data run-extraction run-similarity
 
@@ -33,11 +33,13 @@ run-wasserstein:
 run-euclidean:
 	poetry run python similarity/euclidean.py
 
+run-mahalanobis:
+	poetry run python similarity/mahalanobis_dist.py
+
 SAMPLE ?=
 
 run-fmd:
 	poetry run python fmd/compute_fmd.py $(if $(SAMPLE),--sample $(SAMPLE),)
 
 run-correlation:
-    poetry run python analysis/correlation.py
-
+	poetry run python analysis/correlation.py
