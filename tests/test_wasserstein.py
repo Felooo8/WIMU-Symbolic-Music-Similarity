@@ -15,16 +15,18 @@ def _disable_wandb(monkeypatch):
 
 def test_identical_histograms_zero_distance():
     hist = [0, 1, 2, 3]
-    assert compute_wasserstein_pair(hist, hist) == 0.0
+    bins = np.arange(4, dtype=float)
+    assert compute_wasserstein_pair(hist, hist, bins, bins) == 0.0
 
 
 def test_shifted_histograms_positive_distance():
     base = [1, 0, 0, 0]
     near = [0, 1, 0, 0]
     far = [0, 0, 0, 1]
+    bins = np.arange(4, dtype=float)
 
-    distance_near = compute_wasserstein_pair(base, near)
-    distance_far = compute_wasserstein_pair(base, far)
+    distance_near = compute_wasserstein_pair(base, near, bins, bins)
+    distance_far = compute_wasserstein_pair(base, far, bins, bins)
 
     assert distance_near > 0
     assert distance_far > distance_near
@@ -46,21 +48,25 @@ def test_output_file_exists(tmp_path, monkeypatch):
     distributions_dir = repo / "results" / "distributions"
     distributions_dir.mkdir(parents=True)
 
+    bins = [0.25, 0.5, 1.0, 2.0]
     payload = {
         "nes_mdb": {
             "pitch_class": {"Chiptune": [1, 2, 3, 4]},
             "interval": {"Chiptune": [1, 0, 0, 1]},
             "length_note": {"Chiptune": [4, 2, 1, 0]},
+            "length_note_bins": bins,
         },
         "lakh_midi": {
             "pitch_class": {"Rock": [1, 1, 1, 1]},
             "interval": {"Rock": [0, 1, 1, 0]},
             "length_note": {"Rock": [2, 2, 2, 2]},
+            "length_note_bins": bins,
         },
         "maestro_v3": {
             "pitch_class": {"Classical": [4, 3, 2, 1]},
             "interval": {"Classical": [0, 0, 1, 1]},
             "length_note": {"Classical": [0, 1, 2, 4]},
+            "length_note_bins": bins,
         },
     }
     (distributions_dir / "distributions.json").write_text(json.dumps(payload), encoding="utf-8")
@@ -85,21 +91,25 @@ def test_values_in_reasonable_range(tmp_path, monkeypatch):
     distributions_dir = repo / "results" / "distributions"
     distributions_dir.mkdir(parents=True)
 
+    bins = [0.125, 0.25, 0.5, 1.0, 2.0, 4.0]
     payload = {
         "nes_mdb": {
             "pitch_class": {"Chiptune": [8, 4, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0]},
             "interval": {"Chiptune": [1] * 49},
             "length_note": {"Chiptune": [6, 3, 2, 1, 1, 1]},
+            "length_note_bins": bins,
         },
         "lakh_midi": {
             "pitch_class": {"Rock": [7, 5, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0]},
             "interval": {"Rock": [0, 1] * 24 + [1]},
             "length_note": {"Rock": [4, 4, 2, 2, 1, 1]},
+            "length_note_bins": bins,
         },
         "maestro_v3": {
             "pitch_class": {"Classical": [2, 2, 2, 2, 1, 1, 1, 1, 0, 0, 0, 0]},
             "interval": {"Classical": [0] * 20 + [1] * 29},
             "length_note": {"Classical": [1, 1, 2, 3, 4, 5]},
+            "length_note_bins": bins,
         },
     }
     (distributions_dir / "distributions.json").write_text(json.dumps(payload), encoding="utf-8")

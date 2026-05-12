@@ -11,7 +11,6 @@ import muspy.outputs.midi as _muspy_midi_out
 import numpy as np
 import wandb
 
-# CLAMP2 (and pretty_midi) only accept flat key names; muspy defaults to sharps
 _muspy_midi_out.PITCH_NAMES = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
 from dotenv import load_dotenv
 from frechet_music_distance import FrechetMusicDistance

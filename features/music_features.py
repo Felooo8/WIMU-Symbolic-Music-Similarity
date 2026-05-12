@@ -1,10 +1,9 @@
-import os
+import json
+import logging
+
 import muspy
 import numpy as np
 from muspy import Music
-import json
-import logging
-import yaml
 
 
 def calc_pitch_class(music: Music):

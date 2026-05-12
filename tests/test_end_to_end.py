@@ -28,9 +28,9 @@ def _feature(seed: int, genre: str) -> MusicFeatures:
 
 def test_pipeline_extraction_to_similarity_outputs():
     unsorted = [
-        ("maestro", _feature(1, "Classical")),
-        ("lakh", _feature(2, "Rock")),
-        ("nes", _feature(3, "Chiptune")),
+        ("maestro_v3", _feature(1, "Classical")),
+        ("lakh_midi_rock", _feature(2, "Rock")),
+        ("nes_mdb", _feature(3, "Chiptune")),
     ]
     aggregator = Aggregator(unsorted)
     aggregator.save_features()
@@ -46,8 +46,9 @@ def test_pipeline_extraction_to_similarity_outputs():
 
     matrix = json.loads(matrix_path.read_text(encoding="utf-8"))
     assert "pitch_class" in matrix
-    assert "maestro:Classical_vs_lakh:Rock" in matrix["pitch_class"]
-    assert "maestro:Classical_vs_nes:Chiptune" in matrix["pitch_class"]
+    assert "lakh_midi_rock_vs_maestro_v3" in matrix["pitch_class"]
+    assert "lakh_midi_rock_vs_nes_mdb" in matrix["pitch_class"]
+    assert "maestro_v3_vs_nes_mdb" in matrix["pitch_class"]
 
     summary = json.loads(summary_path.read_text(encoding="utf-8"))
     assert "Classical" in summary

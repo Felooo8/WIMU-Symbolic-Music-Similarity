@@ -4,11 +4,14 @@ import sys
 import types
 from pathlib import Path
 
+import matplotlib
+matplotlib.use("Agg")
 import numpy as np
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "features"))
 sys.path.insert(0, str(REPO_ROOT / "similarity"))
+sys.path.insert(0, str(REPO_ROOT / "analysis"))
 
 
 class _Note:
@@ -174,8 +177,26 @@ def _wasserstein_distance(u_values, v_values, u_weights=None, v_weights=None):
     return float(distance)
 
 
-scipy_distance_stub = types.SimpleNamespace(jensenshannon=_jensen_shannon)
-scipy_stats_stub = types.SimpleNamespace(wasserstein_distance=_wasserstein_distance)
+def _mahalanobis(u, v, VI):
+    diff = np.array(u, dtype=float) - np.array(v, dtype=float)
+    return float(np.sqrt(diff @ np.array(VI, dtype=float) @ diff))
+
+
+def _spearmanr(a, b):
+    a, b = np.array(a, dtype=float), np.array(b, dtype=float)
+    n = len(a)
+    if n < 2:
+        return types.SimpleNamespace(statistic=float("nan"), pvalue=float("nan"))
+    rank_a = np.argsort(np.argsort(a)).astype(float) + 1
+    rank_b = np.argsort(np.argsort(b)).astype(float) + 1
+    d = rank_a - rank_b
+    rho = 1.0 - 6.0 * float(np.sum(d ** 2)) / (n * (n ** 2 - 1))
+    pvalue = 0.05 if abs(rho) > 0.5 else 0.5
+    return types.SimpleNamespace(statistic=float(rho), pvalue=float(pvalue))
+
+
+scipy_distance_stub = types.SimpleNamespace(jensenshannon=_jensen_shannon, mahalanobis=_mahalanobis)
+scipy_stats_stub = types.SimpleNamespace(wasserstein_distance=_wasserstein_distance, spearmanr=_spearmanr)
 scipy_spatial_stub = types.SimpleNamespace(distance=scipy_distance_stub)
 scipy_stub = types.SimpleNamespace(spatial=scipy_spatial_stub, stats=scipy_stats_stub)
 

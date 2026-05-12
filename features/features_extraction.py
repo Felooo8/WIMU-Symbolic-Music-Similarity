@@ -60,9 +60,6 @@ def main():
     with ProcessPoolExecutor() as executor:
         futures = [executor.submit(process_single_file, f) for f in json_files]
 
-        #for future in as_completed(futures):
-        #    print(future.result())
-
     logging.info("-" * 60)
 
     result = [item.result() for item in futures]
