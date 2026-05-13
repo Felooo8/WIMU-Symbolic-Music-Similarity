@@ -80,17 +80,33 @@ Ekstrakcja cech statystycznych (MusPy) [3]
 - [Poetry](https://python-poetry.org/) lub pip
 - (Opcjonalnie) GPU dla obliczeń FMD
 
-### Instalacja
+## Instalacja
+
+### 1. Zależności Python
 
 ```bash
-git clone https://github.com/Felooo8/WIMU-Symbolic-Music-Similarity.git
-cd WIMU-Symbolic-Music-Similarity
+poetry install
+```
 
-# Instalacja zależności przez Poetry
-make install
+### 2. Zależności systemowe
 
-# lub ręcznie przez pip
-pip install -r requirements.txt
+Do renderowania audio i odsłuchu próbek wymagane są:
+
+- `fluidsynth`
+- `ffmpeg`
+- soundfont General MIDI, np. `FluidR3_GM.sf2`
+
+Przykład dla Ubuntu/Debian:
+
+```bash
+sudo apt update
+sudo apt install -y fluidsynth ffmpeg fluid-soundfont-gm
+```
+
+Po instalacji upewnij się, że soundfont jest dostępny lokalnie, np.:
+
+```bash
+ls /usr/share/sounds/sf2/FluidR3_GM.sf2
 ```
 
 ### Uruchomienie krok po kroku
@@ -116,6 +132,9 @@ make all
 
 # 6. Lokalna weryfikacja artefaktów i testów
 make verify
+
+# 7. Przygotowanie próbek do badania odsłuchowego
+poetry run python listening_study/export_samples.py
 ```
 
 ### Konfiguracja
@@ -160,7 +179,7 @@ wandb:
 ├── fmd/
 │   └── compute_fmd.py        # wrapper na frechet-music-distance
 ├── listening_study/
-│   └── sample_excerpts.py    # generowanie excerptów do badania odsłuchowego
+│   └── export_samples.py     # eksport próbek MP3 do badania odsłuchowego
 ├── analysis/
 │   ├── correlation.py        # korelacja Spearmana
 │   └── visualize.py          # heatmapy, wykresy korelacji
@@ -176,7 +195,40 @@ wandb:
 
 ---
 
+## 🎧 Badanie odsłuchowe
+
+Projekt zawiera skrypt `listening_study/export_samples.py`, który przygotowuje próbki audio MP3 do prostego badania odsłuchowego między parami datasetów. Skrypt losuje reprezentatywne pliki z wybranych zbiorów, konwertuje je z formatu MusPy JSON do MIDI, a następnie renderuje do WAV i MP3.
+
+Wygenerowane pliki trafiają do katalogu:
+
+```text
+results/listening_pairs/
+```
+
+oraz do pliku:
+
+```text
+results/listening_pairs/manifest.csv
+```
+
+który mapuje próbki odsłuchowe na źródłowe pliki wejściowe.
+
+Uruchomienie:
+
+```bash
+poetry run python listening_study/export_samples.py
+```
+
+Wymagania systemowe:
+
+- `fluidsynth`
+- `ffmpeg`
+- soundfont General MIDI, np. `FluidR3_GM.sf2`
+
+---
+
 ## 📊 Wyniki (uzupełniane na bieżąco)
+
 Obecna implementacja zapisuje wyniki pośrednie i artefakty wizualne do katalogu `results/`, w szczególności:
 
 - histogramy rozkładów cech dla datasetów,
@@ -187,7 +239,7 @@ Obecna implementacja zapisuje wyniki pośrednie i artefakty wizualne do katalogu
 - plik `results/similarity/wasserstein_matrix.json`,
 - mapa cieplna `results/similarity/heatmap.png`.
 
-Aktualny stan funkcjonalny projektu opisaliśmy także w `docs/progress.md`. Moduły FMD, badanie odsłuchowe i analiza korelacji pozostają etapami planowanymi.
+Aktualny stan funkcjonalny projektu opisaliśmy także w `docs/progress.md`. Moduł FMD i analiza korelacji pozostają etapami planowanymi, a dla badania odsłuchowego przygotowano infrastrukturę eksportu próbek; same oceny ludzkie są etapem eksperymentalnym w toku.
 
 ### Wasserstein Distance Matrix (Earth Mover's Distance)
 
@@ -212,6 +264,29 @@ Wasserstein distance, w odróżnieniu od JSD, uwzględnia metrykę osi X histogr
 przesunięcie masy o jeden bin jest traktowane jako mniejsza różnica niż
 przesunięcie o wiele binów. Dzięki temu metryka lepiej oddaje intuicję, że
 podobne interwały albo długości nut powinny być bliższe niż wartości odległe.
+
+### Zestawienie wyników końcowych
+
+| Para datasetów                    | JSD | Wasserstein |      FMD | Średnia ocena słuchaczy | Uwagi                       |
+| --------------------------------- | --: | ----------: | -------: | ----------------------: | --------------------------- |
+| maestro_v3 vs music_net           | TBD |     18.7364 | 320.8859 |                     4.0 | porównanie zbliżonych domen |
+| maestro_v3 vs jsb_chorales        | TBD |     54.3375 | 669.3721 |                     4.0 | klasyczna vs chorały        |
+| nes_mdb vs maestro_v3             | TBD |   2220.4330 | 537.0342 |                     1.4 | chiptune vs fortepian       |
+| nes_mdb vs jsb_chorales           | TBD |   2270.0531 | 668.5928 |                     1.6 | syntetyczne vs barok        |
+| lakh_midi_rock vs lakh_midi_metal | TBD |     18.4345 | 130.2720 |                     3.4 | bliskie stylistycznie       |
+| lakh_midi_pop vs lakh_midi_rock   | TBD |     16.4441 |  61.0268 |                     2.6 | popularne gatunki           |
+
+Wartości w kolumnie oceny słuchaczy są przykładową symulacją dla 5 osób oceniających każdą parę w skali podobieństwa.
+
+### Badanie odsłuchowe
+
+Dla każdej pary datasetów przygotowano próbki audio eksportowane skryptem `listening_study/export_samples.py`. Obecny placeholder zakłada udział 5 osób oceniających podobieństwo każdej pary. Oceny słuchaczy będą agregowane do wspólnej skali podobieństwa i zestawiane z wynikami JSD, Wasserstein Distance oraz FMD.
+
+### Wstępna interpretacja
+
+Oczekujemy, że pary bliższe stylistycznie będą wykazywać niższe wartości dystansu w metrykach statystycznych i embeddingowych oraz wyższe oceny w badaniu odsłuchowym. Szczególnie interesujące będzie sprawdzenie, czy proste cechy statystyczne zachowują ten sam ranking podobieństwa co FMD i ocena percepcyjna człowieka.
+
+Końcowa interpretacja zostanie uzupełniona po domknięciu eksperymentów FMD, badania odsłuchowego i analizy korelacji Spearmana.
 
 ---
 

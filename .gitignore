@@ -8,3 +8,5 @@ ingestion/__pycache__/*.pyc
 similarity/__pycache__/*.pyc
 tests/__pycache__/*.pyc
 data/*
+listening_study/samples/
+!results/listening_pairs/
