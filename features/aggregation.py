@@ -59,7 +59,7 @@ class  Aggregator:
 
     def save_features(self):
         savepath = Path(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "results", "features"))
-        
+
         if not os.path.exists(savepath):
             savepath.mkdir(parents=True, exist_ok=True)
             print(f"\n[FEATURES] created savepath={savepath}")

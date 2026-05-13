@@ -1,10 +1,9 @@
-import os
+import json
+import logging
+
 import muspy
 import numpy as np
 from muspy import Music
-import json
-import logging
-import yaml
 
 
 def calc_pitch_class(music: Music):
@@ -44,7 +43,7 @@ def durations(music: Music):
 
 
 class MusicFeatures:
-    def __init__(self, measure_resolution: int = 1):
+    def __init__(self, measure_resolution: int = 16):
         self.measure_resolution = measure_resolution
 
         self.genre = "Unknown"

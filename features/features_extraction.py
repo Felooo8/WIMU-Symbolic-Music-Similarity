@@ -15,7 +15,7 @@ def process_single_file(file_path: str):
         filename = os.path.basename(file_path)
         dataset_name = os.path.basename(os.path.dirname(file_path))
 
-        music_features = MusicFeatures(measure_resolution=1)
+        music_features = MusicFeatures(measure_resolution=16)
         music_features.calc(file_path)
 
         logging.info(f"[{dataset_name.upper()}] File: {filename}, genre:{music_features.genre} \features:\n {json.dumps(music_features.to_json(), ensure_ascii=False, indent=5)}")
@@ -60,9 +60,6 @@ def main():
     with ProcessPoolExecutor() as executor:
         futures = [executor.submit(process_single_file, f) for f in json_files]
 
-        #for future in as_completed(futures):
-        #    print(future.result())
-
     logging.info("-" * 60)
 
     result = [item.result() for item in futures]
@@ -95,8 +92,8 @@ def main():
             rows = [[item[column] for column in columns] for item in sample_features]
             wandb.log({"sample_features": wandb.Table(columns=columns, data=rows)})
         
-        aggregator = Aggregator(data)
-        summary_stats = aggregator.summary_stats
+        aggregator2 = Aggregator(data)
+        summary_stats = aggregator2.summary_stats
         wandb.log(summary_stats)
         
         print("✅ Logged to WandB!")

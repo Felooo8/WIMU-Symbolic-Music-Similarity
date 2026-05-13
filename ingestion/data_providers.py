@@ -1,4 +1,5 @@
 import os
+import random
 import logging
 import tarfile
 from pathlib import Path
@@ -29,12 +30,12 @@ class BaseDatasetProvider(ABC):
 
         valid_scores = []
         errors = 0
+        indices = list(range(len(dataset)))
+        random.shuffle(indices)
 
-        for i in range(len(dataset)):
-            if i >= self.sample_size:
-                logging.info(f"[{self.name}] Sample limit reached ({self.sample_size}).")
+        for i in indices:
+            if len(valid_scores) >= self.sample_size:
                 break
-
             try:
                 score = dataset[i]
                 if score is not None and len(score.tracks) > 0:
@@ -55,6 +56,7 @@ class NativeMuspyProvider(BaseDatasetProvider):
     _MAPPING = {
         "maestro_v3": muspy.MAESTRODatasetV3,
         "lakh_midi": muspy.LakhMIDIAlignedDataset,
+        "music_net": muspy.MusicNetDataset,
     }
 
     def prepare_and_get_dataset(self):
@@ -84,6 +86,81 @@ class NativeMuspyProvider(BaseDatasetProvider):
         return None
 
 
+class LakhMidiGenreProvider(BaseDatasetProvider):
+
+    def prepare_and_get_dataset(self):
+        genre_file = self.cfg.get("genre_file")
+        if not genre_file or not os.path.exists(genre_file):
+            raise FileNotFoundError(f"[lakh_midi] Genre file not found: {genre_file}")
+
+        self._target_genre = self.cfg["genre"]
+        genre_map: dict[str, str] = {}
+        with open(genre_file, "r") as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                parts = line.split("\t")
+                if len(parts) >= 2:
+                    genre_map[parts[0]] = parts[1]
+
+        available_genres = set(genre_map.values())
+        if self._target_genre not in available_genres:
+            raise ValueError(
+                f"[lakh_midi] Genre '{self._target_genre}' not found in {genre_file}. "
+                f"Available genres: {sorted(available_genres)}"
+            )
+
+        self._dataset = muspy.LakhMIDIAlignedDataset(self.path, download_and_extract=True)
+        self._filtered_indices = [
+            i for i, filename in enumerate(self._dataset._filenames)
+            if genre_map.get(Path(filename).parts[-2]) == self._target_genre
+        ]
+
+        if not self._filtered_indices:
+            raise ValueError(f"[lakh_midi] No tracks found for genre '{self._target_genre}'")
+
+        logging.info(
+            f"[lakh_midi] genre='{self._target_genre}': {len(self._filtered_indices)} tracks found"
+        )
+        return self
+
+    def __len__(self):
+        return len(self._filtered_indices)
+
+    def __getitem__(self, index):
+        return self._dataset[self._filtered_indices[index]]
+
+    def get_track_id(self, index, dataset) -> str | None:
+        real_index = self._filtered_indices[index]
+        try:
+            file_path = Path(self._dataset._filenames[real_index])
+            track_id = file_path.parts[-2]
+            if track_id.startswith("TR"):
+                return track_id
+        except Exception as e:
+            logging.warning(f"[lakh_midi] Track ID error: {e}")
+        return None
+
+
+class Music21JsbProvider(BaseDatasetProvider):
+
+    def prepare_and_get_dataset(self):
+        from music21 import corpus
+        all_paths = corpus.getComposer("bach")
+        self._paths = [p for p in all_paths if "bwv" in str(p).lower()]
+        logging.info(f"[jsb_chorales] Found {len(self._paths)} chorales in music21 corpus")
+        return self
+
+    def __len__(self):
+        return len(self._paths)
+
+    def __getitem__(self, index):
+        from music21 import corpus
+        score = corpus.parse(self._paths[index])
+        return muspy.from_music21(score)
+
+
 class NesMdbProvider(BaseDatasetProvider):
 
     def prepare_and_get_dataset(self):
@@ -110,9 +187,13 @@ class DatasetFactory:
     def create(dataset_cfg):
         name = dataset_cfg["name"]
 
-        if name in NativeMuspyProvider._MAPPING:
+        if dataset_cfg.get("genre"):
+            return LakhMidiGenreProvider(dataset_cfg)
+        elif name in NativeMuspyProvider._MAPPING:
             return NativeMuspyProvider(dataset_cfg)
         elif name == "nes_mdb":
             return NesMdbProvider(dataset_cfg)
+        elif name == "jsb_chorales":
+            return Music21JsbProvider(dataset_cfg)
         else:
             raise ValueError(f"Unsupported dataset configuration: {name}")
