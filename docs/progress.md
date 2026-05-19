@@ -1,9 +1,9 @@
-# PROGRESS vs DESIGN PROPOSAL (31.03.2026)
+# PROGRESS vs DESIGN PROPOSAL (updated 19.05.2026)
 
 ## ✅ Completed milestones
 
 - ✅ Design Proposal: delivered **18.03.2026**.
-- ✅ Data ingestion:  (maestro/lakh/nes/musicnet/jsb_chorales).
+- ✅ Data ingestion: (maestro/lakh/nes/musicnet/jsb_chorales).
 - ✅ Feature extraction: **8 MusPy metrics + 3 histograms**.
 - ✅ Similarity: **Jensen-Shannon Divergence (JSD)** implemented.
 - ✅ Literature analysis: `docs/literature.md` completed.
@@ -13,5 +13,5 @@
 - ✅ FMD computation (GPU)
 - ✅ Euclidean metrics
 - ✅ Spearman correlation analysis
-## ⏳ Pending (next week)
-- Listening study
+- ✅ Listening study sample export and aggregated listener scores.
+- ✅ Dataset sanity check and baseline separability analysis (`docs/dataset_analysis.md`).

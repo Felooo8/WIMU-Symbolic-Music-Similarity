@@ -67,8 +67,8 @@ Ekstrakcja cech statystycznych (MusPy) [3]
 | Śledzenie eksperymentów | Weights & Biases (W&B)                                                     |
 | Wizualizacja            | matplotlib, seaborn                                                        |
 | Jakość kodu             | black, ruff, poetry                                                        |
-| Testy                   | pytest, tox                                                                |
-| Dokumentacja            | mkdocs                                                                     |
+| Testy                   | pytest                                                                     |
+| Dokumentacja            | Markdown w katalogu `docs/`                                                |
 
 ---
 
@@ -123,6 +123,15 @@ make run-similarity
 
 # 3b. Obliczenie macierzy podobieństwa Wasserstein (Earth Mover's Distance)
 make run-wasserstein
+
+# 3c. Obliczenie FMD
+make run-fmd
+
+# 3d. Korelacja rang Spearmana metryk względem FMD
+make run-correlation
+
+# 3e. Analiza sensowności datasetów i baseline klasyfikator
+make run-baseline
 
 # 4. Uruchomienie testów
 make test
@@ -237,9 +246,13 @@ Obecna implementacja zapisuje wyniki pośrednie i artefakty wizualne do katalogu
 - plik `results/features/summary_stats.json`,
 - plik `results/similarity/jsd_matrix.json`,
 - plik `results/similarity/wasserstein_matrix.json`,
+- plik `results/similarity/fmd_matrix.json`,
+- plik `results/analysis/correlation.json`,
+- plik `results/analysis/baseline_results.json`,
+- wykres `results/analysis/pca_scatter.png`,
 - mapa cieplna `results/similarity/heatmap.png`.
 
-Aktualny stan funkcjonalny projektu opisaliśmy także w `docs/progress.md`. Moduł FMD i analiza korelacji pozostają etapami planowanymi, a dla badania odsłuchowego przygotowano infrastrukturę eksportu próbek; same oceny ludzkie są etapem eksperymentalnym w toku.
+Aktualny stan funkcjonalny projektu opisaliśmy także w `docs/progress.md`. Moduł FMD i analiza korelacji Spearmana są zaimplementowane; `make run-correlation` wymaga obecności pliku `results/similarity/fmd_matrix.json`. Dla badania odsłuchowego przygotowano infrastrukturę eksportu próbek; same oceny ludzkie są etapem eksperymentalnym w toku.
 
 ### Wasserstein Distance Matrix (Earth Mover's Distance)
 
@@ -267,26 +280,38 @@ podobne interwały albo długości nut powinny być bliższe niż wartości odle
 
 ### Zestawienie wyników końcowych
 
+Kolumna JSD pokazuje średnią arytmetyczną z wartości `pitch_class` i `interval`
+zapisanych w `results/similarity/jsd_matrix.json`: `JSD = (JSD_pitch_class + JSD_interval) / 2`.
+
 | Para datasetów                    | JSD | Wasserstein |      FMD | Średnia ocena słuchaczy | Uwagi                       |
 | --------------------------------- | --: | ----------: | -------: | ----------------------: | --------------------------- |
-| maestro_v3 vs music_net           | TBD |     18.7364 | 320.8859 |                     4.0 | porównanie zbliżonych domen |
-| maestro_v3 vs jsb_chorales        | TBD |     54.3375 | 669.3721 |                     4.0 | klasyczna vs chorały        |
-| nes_mdb vs maestro_v3             | TBD |   2220.4330 | 537.0342 |                     1.4 | chiptune vs fortepian       |
-| nes_mdb vs jsb_chorales           | TBD |   2270.0531 | 668.5928 |                     1.6 | syntetyczne vs barok        |
-| lakh_midi_rock vs lakh_midi_metal | TBD |     18.4345 | 130.2720 |                     3.4 | bliskie stylistycznie       |
-| lakh_midi_pop vs lakh_midi_rock   | TBD |     16.4441 |  61.0268 |                     2.6 | popularne gatunki           |
+| maestro_v3 vs music_net           | 0.0664 |     18.7364 | 320.8859 |                     4.0 | porównanie zbliżonych domen |
+| maestro_v3 vs jsb_chorales        | 0.2165 |     54.3375 | 669.3721 |                     4.0 | klasyczna vs chorały        |
+| nes_mdb vs maestro_v3             | 0.0940 |   2220.4330 | 537.0342 |                     1.5 | chiptune vs fortepian       |
+| nes_mdb vs jsb_chorales           | 0.0708 |   2270.0531 | 668.5928 |                     1.5 | syntetyczne vs barok        |
+| lakh_midi_rock vs lakh_midi_metal | 0.0167 |     18.4345 | 130.2720 |                     3.2 | bliskie stylistycznie       |
+| lakh_midi_pop vs lakh_midi_rock   | 0.0092 |     16.4441 |  61.0268 |                     2.7 | popularne gatunki           |
 
-Wartości w kolumnie oceny słuchaczy są przykładową symulacją dla 5 osób oceniających każdą parę w skali podobieństwa.
+Wartości w kolumnie oceny słuchaczy pochodzą z 6 odpowiedzi w badaniu ankietowym: https://tally.so/r/ODbP0g.
 
 ### Badanie odsłuchowe
 
-Dla każdej pary datasetów przygotowano próbki audio eksportowane skryptem `listening_study/export_samples.py`. Obecny placeholder zakłada udział 5 osób oceniających podobieństwo każdej pary. Oceny słuchaczy będą agregowane do wspólnej skali podobieństwa i zestawiane z wynikami JSD, Wasserstein Distance oraz FMD.
+Dla każdej pary datasetów przygotowano próbki audio eksportowane skryptem `listening_study/export_samples.py`. Odpowiedzi z ankiety odsłuchowej (https://tally.so/r/ODbP0g) zostały zagregowane do wspólnej skali podobieństwa i zestawione z wynikami JSD, Wasserstein Distance oraz FMD.
 
 ### Wstępna interpretacja
 
-Oczekujemy, że pary bliższe stylistycznie będą wykazywać niższe wartości dystansu w metrykach statystycznych i embeddingowych oraz wyższe oceny w badaniu odsłuchowym. Szczególnie interesujące będzie sprawdzenie, czy proste cechy statystyczne zachowują ten sam ranking podobieństwa co FMD i ocena percepcyjna człowieka.
+Wyniki są zgodne z odsłuchem: pary klasyczne (`maestro_v3` vs `music_net` oraz
+`maestro_v3` vs `jsb_chorales`) mają najwyższe oceny słuchaczy, a pary z
+`nes_mdb` najniższe. Najsilniejszą zgodność z FMD w analizie Spearmana uzyskały
+metryki oparte na interwałach: `jsd_interval`, `interval_wasserstein` i
+`average_wasserstein` osiągnęły ρ = 0.829 przy p = 0.042. Z kolei
+`jsd_pitch_class` osiągnął ρ = 0.600 przy p = 0.208, więc sam rozkład klas
+wysokości nie daje istotnej korelacji na tej próbie.
 
-Końcowa interpretacja zostanie uzupełniona po domknięciu eksperymentów FMD, badania odsłuchowego i analizy korelacji Spearmana.
+Korelacja Spearmana została policzona dla 6 par datasetów, dlatego należy
+traktować ją jako wynik ilustracyjny i sanity check, a nie mocny dowód
+statystyczny. Przy tak małym `n` pojedyncza para odstająca może istotnie zmienić
+wartości ρ i p-value.
 
 ---
 

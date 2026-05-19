@@ -1,6 +1,6 @@
 # Prototype Readiness Report
 
-**Date:** 31.03.2026
+**Date:** 19.05.2026
 
 ## Submission checklist
 
@@ -17,4 +17,5 @@ Current repository state is suitable for academic review as a prototype:
 - the implemented pipeline can be run locally with `make all`,
 - automated tests can be executed with `make test`,
 - local verification can be executed with `make verify`,
-- FMD, listening study, and correlation analysis remain planned work and are documented as such.
+- FMD results, listening-study scores, Spearman correlation analysis, and the
+  baseline separability analysis are present in the current project artifacts.

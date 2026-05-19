@@ -1,0 +1,91 @@
+{
+  "dataset_summary": {
+    "jsb_chorales": {
+      "n_files": 400,
+      "mean_polyphony": 4.00753117442119,
+      "mean_pitch_entropy": 4.295201503173171,
+      "mean_pitch_range": 35.45,
+      "mean_groove_consistency": 0.8715118831678432
+    },
+    "lakh_midi": {
+      "n_files": 30,
+      "mean_polyphony": 5.013125840602985,
+      "mean_pitch_entropy": 3.9611774865745155,
+      "mean_pitch_range": 51.333333333333336,
+      "mean_groove_consistency": 0.9520765583706001
+    },
+    "lakh_midi_electronic": {
+      "n_files": 398,
+      "mean_polyphony": 3.918782075879528,
+      "mean_pitch_entropy": 3.7510745972740938,
+      "mean_pitch_range": 52.947236180904525,
+      "mean_groove_consistency": 0.9603873032701296
+    },
+    "lakh_midi_jazz": {
+      "n_files": 400,
+      "mean_polyphony": 4.24500924543409,
+      "mean_pitch_entropy": 4.574759162326266,
+      "mean_pitch_range": 54.225,
+      "mean_groove_consistency": 0.952779514709076
+    },
+    "lakh_midi_metal": {
+      "n_files": 316,
+      "mean_polyphony": 4.027267434070579,
+      "mean_pitch_entropy": 4.123477743480728,
+      "mean_pitch_range": 49.778481012658226,
+      "mean_groove_consistency": 0.9644152824047357
+    },
+    "lakh_midi_pop": {
+      "n_files": 400,
+      "mean_polyphony": 5.39248397561579,
+      "mean_pitch_entropy": 4.171318345511818,
+      "mean_pitch_range": 54.17,
+      "mean_groove_consistency": 0.9465543674763566
+    },
+    "lakh_midi_rock": {
+      "n_files": 400,
+      "mean_polyphony": 5.187440954509368,
+      "mean_pitch_entropy": 4.183498101030491,
+      "mean_pitch_range": 52.1325,
+      "mean_groove_consistency": 0.9460119868323147
+    },
+    "maestro_v3": {
+      "n_files": 400,
+      "mean_polyphony": 2.438859265354475,
+      "mean_pitch_entropy": 5.382335717800388,
+      "mean_pitch_range": 68.335,
+      "mean_groove_consistency": 0.9759001695313785
+    },
+    "music_net": {
+      "n_files": 323,
+      "mean_polyphony": 3.139992572083586,
+      "mean_pitch_entropy": 5.074719980490341,
+      "mean_pitch_range": 56.969040247678016,
+      "mean_groove_consistency": 0.9769489976211424
+    },
+    "nes_mdb": {
+      "n_files": 400,
+      "mean_polyphony": 2.2121865659148563,
+      "mean_pitch_entropy": 4.144248225750219,
+      "mean_pitch_range": 51.46,
+      "mean_groove_consistency": 0.9991053594790708
+    }
+  },
+  "knn_accuracy": {
+    "mean": 0.6152230414478252,
+    "std": 0.013621845706620672
+  },
+  "rf_accuracy": {
+    "mean": 0.7210740588262202,
+    "std": 0.016731284183731234
+  },
+  "rf_feature_importances": {
+    "groove_consistency": 0.23363264880762244,
+    "polyphony": 0.17624367632107363,
+    "pitch_class_entropy": 0.14804162482611455,
+    "pitch_entropy": 0.141075044361307,
+    "pitch_range": 0.1341401801302516,
+    "scale_consistency": 0.08882977886102468,
+    "empty_beat_rate": 0.07803704669260603
+  }
+}
