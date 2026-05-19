@@ -5,6 +5,7 @@ import json
 from dotenv import load_dotenv
 from concurrent.futures import ProcessPoolExecutor
 import logging
+from pathlib import Path
 
 from music_features import MusicFeatures
 from aggregation import Aggregator
@@ -28,30 +29,34 @@ def process_single_file(file_path: str):
 
 def main():
     load_dotenv()
+    repo_root = Path(__file__).resolve().parents[1]
+    processed_dir = repo_root / "data" / "processed"
+
     api_key = os.getenv("WANDB_API_KEY")
+    run = None
     if api_key:
         wandb.login(key=api_key)
+        run = wandb.init(
+            project="symbolic-music-similarity",
+            entity="wimu-team-6-proj-3",
+            job_type="feature-extraction",
+            name="parallel-feature-extraction"
+        )
+
+        logging.info("\nDownloading artifact from W&B...")
+        artifact = run.use_artifact('sampled-symbolic-datasets:latest', type='dataset')
+        artifact_dir = Path(artifact.download(root=str(processed_dir)))
     else:
-        raise ValueError("Missing WANDB_API_KEY or .env file!")
-
-    run = wandb.init(
-        project="symbolic-music-similarity",
-        entity="wimu-team-6-proj-3",
-        job_type="feature-extraction",
-        name="parallel-feature-extraction"
-    )
-
-    logging.info("\nDownloading artifact from W&B...")
-    processed_dir = "../data/processed"
-    artifact = run.use_artifact('sampled-symbolic-datasets:latest', type='dataset')
-    artifact_dir = artifact.download(root=processed_dir)
+        logging.warning("WANDB_API_KEY not found; using local data/processed files.")
+        artifact_dir = processed_dir
 
     search_pattern = os.path.join(artifact_dir, "**", "*.json")
     json_files = glob.glob(search_pattern, recursive=True)
 
     if not json_files:
-        logging.error("Json files not found in W&B.")
-        wandb.finish()
+        logging.error("Json files not found in %s.", artifact_dir)
+        if run:
+            wandb.finish()
         return
 
     logging.error(f"\nFound {len(json_files)} files. Starting analysis of features...\n")
@@ -71,7 +76,7 @@ def main():
         aggregator.save_features()
         aggregator.create_histograms()
     
-    if len(data) > 0:
+    if len(data) > 0 and run:
         print("\nLogging to WandB...")
         
         total_processed = len(data)
@@ -98,7 +103,8 @@ def main():
         
         print("✅ Logged to WandB!")
 
-    wandb.finish()
+    if run:
+        wandb.finish()
 
 
 if __name__ == "__main__":

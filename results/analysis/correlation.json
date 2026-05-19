@@ -1,0 +1,48 @@
+{
+  "pairs": [
+    "jsb_chorales_vs_maestro_v3",
+    "jsb_chorales_vs_nes_mdb",
+    "lakh_midi_metal_vs_lakh_midi_rock",
+    "lakh_midi_pop_vs_lakh_midi_rock",
+    "maestro_v3_vs_music_net",
+    "maestro_v3_vs_nes_mdb"
+  ],
+  "vs_fmd": {
+    "jsd_pitch_class": {
+      "rho": 0.6,
+      "pvalue": 0.208
+    },
+    "jsd_interval": {
+      "rho": 0.8285714285714287,
+      "pvalue": 0.04156268221574335
+    },
+    "pitch_class_wasserstein": {
+      "rho": 0.4285714285714286,
+      "pvalue": 0.3965014577259473
+    },
+    "interval_wasserstein": {
+      "rho": 0.8285714285714287,
+      "pvalue": 0.04156268221574335
+    },
+    "length_note_wasserstein": {
+      "rho": 0.7714285714285715,
+      "pvalue": 0.07239650145772594
+    },
+    "average_wasserstein": {
+      "rho": 0.8285714285714287,
+      "pvalue": 0.04156268221574335
+    },
+    "ensemble_intervals": {
+      "rho": 0.8285714285714287,
+      "pvalue": 0.04156268221574335
+    },
+    "ensemble_interval_mahal": {
+      "rho": 0.8285714285714287,
+      "pvalue": 0.04156268221574335
+    },
+    "ensemble_top3": {
+      "rho": 0.8285714285714287,
+      "pvalue": 0.04156268221574335
+    }
+  }
+}

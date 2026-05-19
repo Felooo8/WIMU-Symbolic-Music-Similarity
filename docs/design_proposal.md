@@ -161,8 +161,8 @@ project/
 | Śledzenie eksperymentów | Weights & Biases (W&B) |
 | Wizualizacja | matplotlib, seaborn |
 | Jakość kodu | black, flake8 / ruff, poetry |
-| Testy automatyczne | pytest, tox (Python 3.10 + 3.11) |
-| Dokumentacja | mkdocs |
+| Testy automatyczne | pytest uruchamiany lokalnie i w GitHub Actions na Pythonie 3.11 |
+| Dokumentacja | Markdown w katalogu `docs/` |
 | Struktura projektu | cookiecutter data science |
 | Konteneryzacja (opcjonalna) | Docker |
 
