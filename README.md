@@ -315,6 +315,14 @@ wartości ρ i p-value.
 
 ---
 
+## Prezentacja wizualna projektu
+
+W ramach projektu stworzono wideo, które pokazuje działanie projektu w skrócie, przykładowe próbki audio użyte do badań odsłuchowych oraz histogramy.
+
+[Klikni tutaj, by przenieść się do pliku wideo](https://github.com/Felooo8/WIMU-Symbolic-Music-Similarity/blob/main/video.mp4).
+
+---
+
 ## 📚 Referencje
 
 1. Retkowski, Stępniak, Modrzejewski (2024). _Frechet Music Distance: A Metric For Generative Symbolic Music Evaluation_. [arXiv:2412.07948](https://arxiv.org/abs/2412.07948)
