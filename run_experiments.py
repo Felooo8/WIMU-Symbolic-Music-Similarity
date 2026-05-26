@@ -104,7 +104,7 @@ def main():
             run_pipeline()
 
             corr_path = RESULTS_ROOT / "analysis" / "correlation.json"
-            current_run_stats = {}  # Słownik na wyniki tylko z tego jednego uruchomienia
+            current_run_stats = {}
 
             if corr_path.exists():
                 try:
