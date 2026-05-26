@@ -15,38 +15,46 @@ datasets:
     name: "maestro_v3"
     path: "data/raw/maestro_v3"
     sample_size: 400
-  lakh_midi_rock:
-    name: "lakh_midi_rock"
-    path: "data/raw/lakh_midi"
-    genre: "Rock"
-    genre_file: "dataset/lakh_midi/msd_tagtraum_cd2c.cls"
-    sample_size: 400
-  lakh_midi_pop:
-    name: "lakh_midi_pop"
-    path: "data/raw/lakh_midi"
-    genre: "Pop"
-    genre_file: "dataset/lakh_midi/msd_tagtraum_cd2c.cls"
-    sample_size: 400
-  lakh_midi_electronic:
-    name: "lakh_midi_electronic"
-    path: "data/raw/lakh_midi"
-    genre: "Electronic"
-    genre_file: "dataset/lakh_midi/msd_tagtraum_cd2c.cls"
-    sample_size: 400
-  lakh_midi_jazz:
-    name: "lakh_midi_jazz"
-    path: "data/raw/lakh_midi"
-    genre: "Jazz"
-    genre_file: "dataset/lakh_midi/msd_tagtraum_cd2c.cls"
-    sample_size: 400
-  lakh_midi_metal:
-    name: "lakh_midi_metal"
-    path: "data/raw/lakh_midi"
-    genre: "Metal"
-    genre_file: "dataset/lakh_midi/msd_tagtraum_cd2c.cls"
-    sample_size: 400
+##  lakh_midi_rock:
+##    name: "lakh_midi_rock"
+##    path: "data/raw/lakh_midi"
+##    genre: "Rock"
+##    genre_file: "dataset/lakh_midi/msd_tagtraum_cd2c.cls"
+##    sample_size: 400
+#  lakh_midi_pop:
+#    name: "lakh_midi_pop"
+#    path: "data/raw/lakh_midi"
+#    genre: "Pop"
+#    genre_file: "dataset/lakh_midi/msd_tagtraum_cd2c.cls"
+#    sample_size: 400
+##  lakh_midi_electronic:
+##    name: "lakh_midi_electronic"
+##    path: "data/raw/lakh_midi"
+##    genre: "Electronic"
+##    genre_file: "dataset/lakh_midi/msd_tagtraum_cd2c.cls"
+##    sample_size: 400
+#  lakh_midi_jazz:
+#    name: "lakh_midi_jazz"
+#    path: "data/raw/lakh_midi"
+#    genre: "Jazz"
+#    genre_file: "dataset/lakh_midi/msd_tagtraum_cd2c.cls"
+#    sample_size: 400
+##  lakh_midi_metal:
+#    name: "lakh_midi_metal"
+#    path: "data/raw/lakh_midi"
+#    genre: "Metal"
+#    genre_file: "dataset/lakh_midi/msd_tagtraum_cd2c.cls"
+#    sample_size: 400
   nes_mdb:
     name: "nes_mdb"
     path: "data/raw/nes_mdb"
     sample_size: 400
     url: "https://drive.google.com/file/d/1w2uo1Cmio4gz6nGUhZOtzF54kPkoKyo7/view"
+  haydn_op20:
+      name: "haydn_op20"
+      path: "data/raw/haydn_op20"
+      sample_size: 400
+  nottingham:
+    name: "nottingham"
+    path: "data/raw/nottingham"
+    sample_size: 400

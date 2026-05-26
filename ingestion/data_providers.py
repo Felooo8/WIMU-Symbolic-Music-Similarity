@@ -57,6 +57,8 @@ class NativeMuspyProvider(BaseDatasetProvider):
         "maestro_v3": muspy.MAESTRODatasetV3,
         "lakh_midi": muspy.LakhMIDIAlignedDataset,
         "music_net": muspy.MusicNetDataset,
+        "haydn_op20": muspy.HaydnOp20Dataset,
+        "nottingham": muspy.NottinghamDatabase,
     }
 
     def prepare_and_get_dataset(self):
