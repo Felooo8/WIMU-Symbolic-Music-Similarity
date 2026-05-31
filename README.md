@@ -133,6 +133,9 @@ make run-correlation
 # 3e. Analiza sensowności datasetów i baseline klasyfikator
 make run-baseline
 
+# 3f. Klasyfikacja gatunku/stylu muzycznego
+make run-genre-classifier
+
 # 4. Uruchomienie testów
 make test
 
@@ -191,7 +194,8 @@ wandb:
 │   └── export_samples.py     # eksport próbek MP3 do badania odsłuchowego
 ├── analysis/
 │   ├── correlation.py        # korelacja Spearmana
-│   └── visualize.py          # heatmapy, wykresy korelacji
+│   ├── baseline_classifier.py # klasyfikacja datasetów na cechach statystycznych
+│   └── genre_classifier.py   # klasyfikacja gatunku/stylu muzycznego
 ├── tests/                    # pytest
 ├── docs/
 │   ├── literature.md         # tabela analizy literaturowej
@@ -249,6 +253,8 @@ Obecna implementacja zapisuje wyniki pośrednie i artefakty wizualne do katalogu
 - plik `results/similarity/fmd_matrix.json`,
 - plik `results/analysis/correlation.json`,
 - plik `results/analysis/baseline_results.json`,
+- plik `results/analysis/genre_results.json`,
+- wykresy `results/analysis/genre_confusion_matrix_*.png`,
 - wykres `results/analysis/pca_scatter.png`,
 - mapa cieplna `results/similarity/heatmap.png`.
 

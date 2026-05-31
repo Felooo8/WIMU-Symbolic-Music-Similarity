@@ -1,0 +1,308 @@
+{
+  "feature_columns": [
+    "pitch_class_entropy",
+    "pitch_entropy",
+    "pitch_range",
+    "scale_consistency",
+    "polyphony",
+    "empty_beat_rate",
+    "groove_consistency"
+  ],
+  "variants": {
+    "coarse": {
+      "style_map": {
+        "maestro_v3": "classical",
+        "music_net": "classical",
+        "jsb_chorales": "classical",
+        "nes_mdb": "chiptune",
+        "lakh_midi_rock": "rock",
+        "lakh_midi_metal": "metal",
+        "lakh_midi_pop": "pop",
+        "lakh_midi_jazz": "jazz",
+        "lakh_midi_electronic": "electronic"
+      },
+      "class_counts": {
+        "chiptune": 400,
+        "classical": 1123,
+        "electronic": 398,
+        "jazz": 400,
+        "metal": 316,
+        "pop": 400,
+        "rock": 400
+      },
+      "dropped_nan": {
+        "jsb_chorales": 0,
+        "lakh_midi_electronic": 2,
+        "lakh_midi_jazz": 0,
+        "lakh_midi_metal": 4,
+        "lakh_midi_pop": 0,
+        "lakh_midi_rock": 0,
+        "maestro_v3": 0,
+        "music_net": 0,
+        "nes_mdb": 0
+      },
+      "excluded_datasets": {
+        "lakh_midi": 30
+      },
+      "models": {
+        "knn_k3": {
+          "mean": 0.6450424833282555,
+          "std": 0.013282979250973485
+        },
+        "svm_rbf": {
+          "mean": 0.6942059341254527,
+          "std": 0.009840344237022328
+        },
+        "random_forest": {
+          "mean": 0.7471619951931214,
+          "std": 0.01609441943782808
+        }
+      },
+      "best_model": "random_forest",
+      "confusion_matrix": {
+        "labels": [
+          "chiptune",
+          "classical",
+          "electronic",
+          "jazz",
+          "metal",
+          "pop",
+          "rock"
+        ],
+        "matrix": [
+          [
+            398,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            3,
+            1101,
+            1,
+            15,
+            1,
+            0,
+            2
+          ],
+          [
+            0,
+            5,
+            237,
+            21,
+            40,
+            47,
+            48
+          ],
+          [
+            0,
+            15,
+            11,
+            298,
+            14,
+            33,
+            29
+          ],
+          [
+            2,
+            5,
+            55,
+            22,
+            174,
+            23,
+            35
+          ],
+          [
+            0,
+            4,
+            53,
+            23,
+            27,
+            203,
+            90
+          ],
+          [
+            2,
+            11,
+            49,
+            22,
+            35,
+            124,
+            157
+          ]
+        ],
+        "image": "results/analysis/genre_confusion_matrix_coarse.png"
+      },
+      "per_class_accuracy": {
+        "chiptune": 0.995,
+        "classical": 0.9804096170970614,
+        "electronic": 0.5954773869346733,
+        "jazz": 0.745,
+        "metal": 0.5506329113924051,
+        "pop": 0.5075,
+        "rock": 0.3925
+      }
+    },
+    "with_chorale": {
+      "style_map": {
+        "maestro_v3": "classical",
+        "music_net": "classical",
+        "jsb_chorales": "chorale",
+        "nes_mdb": "chiptune",
+        "lakh_midi_rock": "rock",
+        "lakh_midi_metal": "metal",
+        "lakh_midi_pop": "pop",
+        "lakh_midi_jazz": "jazz",
+        "lakh_midi_electronic": "electronic"
+      },
+      "class_counts": {
+        "chiptune": 400,
+        "chorale": 400,
+        "classical": 723,
+        "electronic": 398,
+        "jazz": 400,
+        "metal": 316,
+        "pop": 400,
+        "rock": 400
+      },
+      "dropped_nan": {
+        "jsb_chorales": 0,
+        "lakh_midi_electronic": 2,
+        "lakh_midi_jazz": 0,
+        "lakh_midi_metal": 4,
+        "lakh_midi_pop": 0,
+        "lakh_midi_rock": 0,
+        "maestro_v3": 0,
+        "music_net": 0,
+        "nes_mdb": 0
+      },
+      "excluded_datasets": {
+        "lakh_midi": 30
+      },
+      "models": {
+        "knn_k3": {
+          "mean": 0.6453327578619545,
+          "std": 0.014705723541375863
+        },
+        "svm_rbf": {
+          "mean": 0.6915900781964052,
+          "std": 0.009564480087339578
+        },
+        "random_forest": {
+          "mean": 0.7413531193933853,
+          "std": 0.017113438943779362
+        }
+      },
+      "best_model": "random_forest",
+      "confusion_matrix": {
+        "labels": [
+          "chiptune",
+          "chorale",
+          "classical",
+          "electronic",
+          "jazz",
+          "metal",
+          "pop",
+          "rock"
+        ],
+        "matrix": [
+          [
+            398,
+            0,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            396,
+            1,
+            0,
+            1,
+            0,
+            0,
+            2
+          ],
+          [
+            4,
+            0,
+            698,
+            1,
+            19,
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            5,
+            237,
+            18,
+            37,
+            48,
+            53
+          ],
+          [
+            0,
+            2,
+            16,
+            13,
+            290,
+            15,
+            33,
+            31
+          ],
+          [
+            2,
+            1,
+            4,
+            58,
+            25,
+            169,
+            24,
+            33
+          ],
+          [
+            0,
+            3,
+            1,
+            50,
+            27,
+            19,
+            200,
+            100
+          ],
+          [
+            2,
+            7,
+            3,
+            48,
+            25,
+            43,
+            112,
+            160
+          ]
+        ],
+        "image": "results/analysis/genre_confusion_matrix_with_chorale.png"
+      },
+      "per_class_accuracy": {
+        "chiptune": 0.995,
+        "chorale": 0.99,
+        "classical": 0.9654218533886584,
+        "electronic": 0.5954773869346733,
+        "jazz": 0.725,
+        "metal": 0.5348101265822784,
+        "pop": 0.5,
+        "rock": 0.4
+      }
+    }
+  },
+  "notes": "JSD/Wasserstein/FMD are dataset-level distances, so this classifier uses per-file statistical features instead of injecting dataset-level metrics directly into SVM/KNN."
+}

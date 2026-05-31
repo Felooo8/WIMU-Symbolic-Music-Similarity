@@ -64,7 +64,49 @@ Najważniejsze cechy (Random Forest):
 
 Wnioski: Wynik KNN jest umiarkowany, co sugeruje, że lokalne sąsiedztwo w prostej przestrzeni cech nie rozdziela idealnie wszystkich datasetów. Random Forest osiąga 72.1%, więc cechy statystyczne mają wyraźny sygnał klasyfikacyjny, ale separowalność nie jest na tyle wysoka, żeby traktować je jako pełny zamiennik FMD. Najważniejsze cechy wskazują, że rytmiczna regularność, polifonia i rozkład wysokości są głównymi źródłami różnic między datasetami.
 
-## 4. Korelacja Spearmana względem FMD
+## 4. Klasyfikacja gatunku / stylu muzycznego
+
+Oprócz klasyfikacji konkretnego datasetu przeprowadzono drugi eksperyment:
+klasyfikację stylu muzycznego na podstawie tych samych cech per utwór MIDI. W
+tym eksperymencie `lakh_midi` bez doprecyzowanego gatunku został pominięty,
+ponieważ jest zbiorem mieszanym i nie ma jednoznacznej etykiety stylu.
+
+| Dataset | Etykieta coarse | Etykieta with_chorale |
+|---|---|---|
+| maestro_v3 | classical | classical |
+| music_net | classical | classical |
+| jsb_chorales | classical | chorale |
+| nes_mdb | chiptune | chiptune |
+| lakh_midi_electronic | electronic | electronic |
+| lakh_midi_jazz | jazz | jazz |
+| lakh_midi_metal | metal | metal |
+| lakh_midi_pop | pop | pop |
+| lakh_midi_rock | rock | rock |
+
+| Wariant | KNN (k=3) | SVM (RBF) | Random Forest |
+|---|---:|---:|---:|
+| coarse | 64.5% ± 1.3% | 69.4% ± 1.0% | **74.7% ± 1.6%** |
+| with_chorale | 64.5% ± 1.5% | 69.2% ± 1.0% | **74.1% ± 1.7%** |
+
+![Genre confusion matrix — coarse](../results/analysis/genre_confusion_matrix_coarse.png)
+
+![Genre confusion matrix — with chorale](../results/analysis/genre_confusion_matrix_with_chorale.png)
+
+Wnioski: Random Forest ponownie wypada najlepiej, osiągając około 74% accuracy,
+czyli nieco więcej niż klasyfikacja konkretnego datasetu. Klasy `chiptune`,
+`classical` i osobno wydzielone `chorale` są rozpoznawane bardzo dobrze, co
+zgadza się z odsłuchem: NES-MDB i chorały Bacha mają bardzo charakterystyczny
+profil. Największe pomyłki występują między stylami popularnymi z Lakh MIDI,
+zwłaszcza `rock`, `pop`, `metal` i `electronic`, co jest muzycznie sensowne,
+bo są to wielościeżkowe MIDI o podobnym instrumentarium i dużej zmienności
+wewnątrzgatunkowej.
+
+Metryki JSD, Wasserstein i FMD nie zostały użyte bezpośrednio jako cechy SVM,
+ponieważ są dystansami między datasetami, a nie cechami pojedynczego utworu.
+Klasyfikator stylu działa więc na cechach per-file, natomiast metryki złożone
+służą do porównywania całych zbiorów.
+
+## 5. Korelacja Spearmana względem FMD
 
 | Metryka | ρ | p-value |
 |---------|--:|--------:|
@@ -83,15 +125,17 @@ pamiętać, że korelacja została policzona tylko dla 6 par datasetów, więc m
 charakter ilustracyjny: pojedyncza nietypowa para może mocno zmienić ranking i
 p-value.
 
-## 5. Wniosek końcowy
+## 6. Wniosek końcowy
 
 Proste cechy statystyczne sensownie różnicują datasety: PCA pokazuje widoczne
 pasma dla `maestro_v3`, `music_net` i `nes_mdb`, a Random Forest osiąga 72.1% ±
 1.7% accuracy przy 5-krotnej walidacji krzyżowej. Jednocześnie KNN na poziomie
 61.5% ± 1.4% oraz nakładanie się podzbiorów Lakh MIDI pokazują, że ta
-reprezentacja nie separuje wszystkich stylów jednoznacznie. Korelacje Spearmana
-wskazują, że cechy interwałowe najlepiej zgadzają się z FMD, ale ze względu na
-małą liczbę par (`n=6`) należy traktować ten wynik jako ilustracyjny. W praktyce
-cechy statystyczne są dobrym, szybkim sanity checkiem i sensownym proxy
-pierwszego rzędu, ale powinny być interpretowane razem z FMD oraz wynikami
+reprezentacja nie separuje wszystkich stylów jednoznacznie. Klasyfikator
+gatunku/stylu wzmacnia ten wniosek: Random Forest osiąga 74.7% ± 1.6% w
+wariancie coarse i 74.1% ± 1.7% przy osobnym wydzieleniu chorałów. Korelacje
+Spearmana wskazują, że cechy interwałowe najlepiej zgadzają się z FMD, ale ze
+względu na małą liczbę par (`n=6`) należy traktować ten wynik jako ilustracyjny.
+W praktyce cechy statystyczne są dobrym, szybkim sanity checkiem i sensownym
+proxy pierwszego rzędu, ale powinny być interpretowane razem z FMD oraz wynikami
 badania percepcyjnego, a nie jako ich pełny zamiennik.

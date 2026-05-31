@@ -7,6 +7,9 @@ results/*
 results/analysis/*
 !results/analysis/baseline_results.json
 !results/analysis/correlation.json
+!results/analysis/genre_results.json
+!results/analysis/genre_confusion_matrix_coarse.png
+!results/analysis/genre_confusion_matrix_with_chorale.png
 !results/analysis/pca_scatter.png
 !results/similarity/
 results/similarity/*
