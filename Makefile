@@ -1,4 +1,4 @@
-.PHONY: install clean download-data download-artifact run-extraction run-similarity run-wasserstein run-fmd run-euclidean run-mahalanobis run-correlation run-baseline test verify all
+.PHONY: install clean download-data download-artifact run-extraction run-similarity run-wasserstein run-fmd run-euclidean run-mahalanobis run-correlation run-baseline run-genre-classifier test verify all
 
 all: install download-data run-extraction run-similarity
 
@@ -46,3 +46,6 @@ run-correlation:
 
 run-baseline:
 	poetry run python analysis/baseline_classifier.py
+
+run-genre-classifier:
+	poetry run python analysis/genre_classifier.py
